@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCI | Global Consolidation Index</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #e5e5e5; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .progress-glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+    </style>
+</head>
+<body class="p-6 md:p-12">
+
+    <div class="max-w-3xl mx-auto">
+        <header class="mb-12 border-b border-zinc-800 pb-8">
+            <h1 class="text-xs uppercase tracking-[0.3em] text-blue-500 font-bold mb-2 mono">System Status: Active</h1>
+            <h2 class="text-3xl md:text-4xl font-light tracking-tight text-white">Global Consolidation Index <span class="text-zinc-500">(GCI)</span></h2>
+            <p class="mt-4 text-zinc-400 leading-relaxed">Tracking the transition from a multipolar world to consolidated hegemonic control. 100% represents a total global monopoly by < 5 primary entities.</p>
+        </header>
+
+        <section class="mb-16">
+            <div class="flex justify-between items-end mb-4">
+                <span class="text-sm uppercase tracking-widest text-zinc-500 mono">Current Integration Level</span>
+                <span id="percent-text" class="text-5xl font-bold text-white mono">0%</span>
+            </div>
+            <div class="w-full bg-zinc-900 h-4 rounded-full overflow-hidden border border-zinc-800">
+                <div id="progress-bar" class="bg-blue-600 h-full progress-glow transition-all duration-1000 ease-out" style="width: 0%"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mt-8">
+                <div class="bg-zinc-900/50 p-4 border border-zinc-800 rounded">
+                    <p class="text-xs text-zinc-500 uppercase mb-1 mono">Last Update</p>
+                    <p id="last-update" class="text-sm text-zinc-300">Calculating...</p>
+                </div>
+                <div class="bg-zinc-900/50 p-4 border border-zinc-800 rounded">
+                    <p class="text-xs text-zinc-500 uppercase mb-1 mono">Primary Vectors</p>
+                    <p class="text-sm text-zinc-300">Kinetic & Economic</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3 class="text-xs uppercase tracking-[0.2em] text-zinc-500 font-bold mb-6 mono">Recent Hegemonic Activity</h3>
+            <div id="source-feed" class="space-y-4">
+                </div>
+        </section>
+
+        <footer class="mt-24 pt-8 border-t border-zinc-900 text-center">
+            <p class="text-[10px] uppercase tracking-widest text-zinc-600 mono">Open Data Initiative // No Affiliation</p>
+        </footer>
+    </div>
+
+    <script>
+        /** * DATA MANAGEMENT
+         * Update the values below to change the site content.
+         */
+        const GCI_DATA = {
+            currentPercent: 70.4,
+            lastUpdated: "March 19, 2026",
+            sources: [
+                {
+                    title: "Regional Sovereignty Dissolution: Middle East Sector",
+                    summary: "Decapitation strikes successfully eliminate non-aligned leadership, forcing resource integration.",
+                    link: "#",
+                    tag: "Kinetic"
+                },
+                {
+                    title: "Economic Orbit Stabilization",
+                    summary: "Consolidation of top 10 global currencies into two primary digital exchange blocks.",
+                    link: "#",
+                    tag: "Fiscal"
+                },
+                {
+                    title: "Infrastructure Annexation",
+                    summary: "Major power assumes direct control over neighboring utility and logistics networks.",
+                    link: "#",
+                    tag: "Territorial"
+                }
+            ]
+        };
+
+        // Render Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            // Update Stats
+            setTimeout(() => {
+                document.getElementById('progress-bar').style.width = GCI_DATA.currentPercent + "%";
+                document.getElementById('percent-text').innerText = GCI_DATA.currentPercent + "%";
+            }, 500);
+            
+            document.getElementById('last-update').innerText = GCI_DATA.lastUpdated;
+
+            // Update Feed
+            const feed = document.getElementById('source-feed');
+            GCI_DATA.sources.forEach(source => {
+                const item = document.createElement('div');
+                item.className = "group border border-zinc-800 p-5 rounded hover:border-blue-500/50 transition-colors bg-zinc-900/20";
+                item.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[10px] px-2 py-1 bg-zinc-800 text-zinc-400 rounded mono uppercase">${source.tag}</span>
+                        <a href="${source.link}" class="text-blue-500 text-xs hover:underline mono">View Verification ↗</a>
+                    </div>
+                    <h4 class="text-lg font-medium text-white mb-2">${source.title}</h4>
+                    <p class="text-sm text-zinc-400 leading-relaxed">${source.summary}</p>
+                `;
+                feed.appendChild(item);
+            });
+        });
+    </script>
+</body>
+</html>
