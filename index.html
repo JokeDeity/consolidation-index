@@ -3,235 +3,111 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Note: CSP in meta is limited compared to response headers, but still useful on GitHub Pages -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; base-uri 'self'; form-action 'none'; frame-ancestors 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.gdeltproject.org; base-uri 'self'; form-action 'none'; frame-ancestors 'self'">
   <title>GCI | Global Control Tracker</title>
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="Global Control Index | Live Monitoring">
-  <meta property="og:description" content="Tracking measurable indicators of global power concentration.">
+  <meta property="og:description" content="Tracking global power concentration with a simple public index and live sources.">
   <meta property="og:image" content="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop">
 
   <style>
     :root {
-      --amber: #f59e0b;
-      --zinc-900: #18181b;
-      --zinc-950: #09090b;
-      --zinc-800: #27272a;
-      --zinc-700: #3f3f46;
-      --zinc-400: #a1a1aa;
-      --text: #d4d4d8;
-      --danger: #dc2626;
-      --ok: #10b981;
+      --amber: #f59e0b; --zinc-950: #09090b; --zinc-900: #18181b; --zinc-800: #27272a;
+      --zinc-700: #3f3f46; --zinc-400: #a1a1aa; --text: #d4d4d8; --ok: #10b981; --err: #dc2626;
     }
-
     * { box-sizing: border-box; }
-    body {
-      font-family: Inter, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: #050505;
-      color: var(--text);
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-    }
+    body { margin: 0; background: #050505; color: var(--text); font-family: Inter, -apple-system, Segoe UI, Roboto, sans-serif; }
     .mono { font-family: "JetBrains Mono", Consolas, monospace; }
     .max-w-3xl { max-width: 48rem; margin: 0 auto; padding: 0 1.5rem; }
 
     .system-bar {
       width: 100%;
-      background: rgba(245, 158, 11, 0.1);
-      border-bottom: 1px solid rgba(245, 158, 11, 0.2);
-      margin-bottom: 2rem;
+      background: rgba(245,158,11,.12);
+      border-bottom: 1px solid rgba(245,158,11,.25);
+      margin-bottom: 1.8rem;
     }
     .bar-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 48rem;
-      margin: 0 auto;
-      padding: 12px 1.5rem;
-      gap: 1rem;
+      max-width: 48rem; margin: 0 auto; padding: 12px 1.5rem;
+      display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
     }
     .disclosure-tag {
-      color: var(--amber);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      font-size: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      white-space: nowrap;
+      color: var(--amber); font-weight: 800; text-transform: uppercase; letter-spacing: .16em; font-size: 10px;
+      display: flex; align-items: center; gap: 8px;
     }
-
-    header {
-      text-align: center;
-      margin-bottom: 3rem;
-      border-bottom: 1px solid var(--zinc-900);
-      padding-bottom: 2.5rem;
-    }
-    h1 {
-      color: #fff;
-      font-size: clamp(2rem, 7vw, 3.2rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      margin: 0 0 1.2rem 0;
-      line-height: 1.05;
-    }
-    .hero-p {
-      font-size: 1rem;
-      color: var(--zinc-400);
-      text-align: left;
-      line-height: 1.65;
-      margin-bottom: 1rem;
-    }
-    .method-box {
-      background: rgba(9, 9, 11, 0.5);
-      padding: 1.2rem;
-      border: 1px solid var(--zinc-900);
-      border-radius: 12px;
-      text-align: left;
-      margin-top: 1.6rem;
-    }
-    .method-text {
-      font-size: 13px;
-      color: var(--zinc-400);
-      margin: 0;
-      line-height: 1.6;
-    }
-
-    .monitor-card {
-      background: rgba(24, 24, 27, 0.2);
-      padding: 2rem;
-      border-radius: 1.4rem;
-      border: 1px solid rgba(39, 39, 42, 0.5);
-      margin-bottom: 2rem;
-    }
-    .percent-num {
-      font-size: clamp(3.8rem, 13vw, 6rem);
-      font-weight: 900;
-      color: var(--amber);
-      line-height: 0.9;
-      letter-spacing: -0.05em;
-    }
-    .progress-track {
-      width: 100%;
-      background: var(--zinc-950);
-      height: 2.6rem;
-      border-radius: 2rem;
-      padding: 0.45rem;
-      border: 1px solid var(--zinc-900);
-    }
-    #progress-bar {
-      height: 100%;
-      background: var(--amber);
-      border-radius: 2rem;
-      width: 0%;
-      transition: width 700ms ease;
-    }
-
-    .status-row {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 1rem;
-      font-size: 12px;
-      color: var(--zinc-400);
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .ok { color: var(--ok); font-weight: 700; }
-    .warn { color: var(--amber); font-weight: 700; }
-    .err { color: var(--danger); font-weight: 700; }
-
-    .social-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 2rem;
-    }
-    .action-btn {
-      padding: 11px 16px;
-      border-radius: 8px;
-      font-weight: 700;
-      text-transform: uppercase;
-      font-size: 11px;
-      cursor: pointer;
-      text-decoration: none;
-      border: none;
-    }
-    .action-btn:focus-visible {
-      outline: 2px solid var(--amber);
-      outline-offset: 2px;
-    }
-    .btn-primary { background: var(--amber); color: #000; }
-    .btn-secondary {
-      background: var(--zinc-900);
-      color: #fff;
-      border: 1px solid var(--zinc-800);
-    }
-
-    .distro-panel {
-      background: rgba(9, 9, 11, 0.4);
-      border: 1px solid var(--zinc-900);
-      padding: 1.4rem;
-      border-radius: 1rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.4rem;
-      align-items: center;
-      margin-bottom: 2.5rem;
-    }
-    #qr-container {
-      width: 140px;
-      height: 140px;
-      background: #fff;
-      padding: 10px;
-      border-radius: 8px;
-      border: 4px solid var(--amber);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto;
-      flex-shrink: 0;
-    }
-    #qr-container img { width: 100%; height: 100%; }
-
-    #source-feed {
-      max-height: 560px;
-      overflow-y: auto;
-      padding-right: 10px;
-    }
-    .news-card {
-      padding: 16px;
-      border-left: 3px solid var(--zinc-800);
-      background: rgba(9, 9, 11, 0.2);
-      margin-bottom: 12px;
-      border-radius: 0 10px 10px 0;
-    }
-    .news-title { color: #fff; margin: 10px 0 8px; font-size: 1rem; line-height: 1.35; }
-    .news-desc { color: #a1a1aa; font-size: 14px; line-height: 1.5; margin: 0 0 8px; }
-
     .pulse { animation: pulse 2s infinite; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
 
+    header {
+      border-bottom: 1px solid var(--zinc-900); padding-bottom: 2rem; margin-bottom: 2.2rem;
+    }
+    h1 {
+      margin: 0 0 1rem 0; line-height: 1.05; color: #fff;
+      font-size: clamp(2.1rem, 8vw, 3.4rem); letter-spacing: -.03em;
+    }
+    .hero-p { margin: 0 0 .8rem 0; color: var(--zinc-400); line-height: 1.65; font-size: 1rem; }
+    .method-box {
+      margin-top: 1.2rem; background: rgba(9,9,11,.45); border: 1px solid var(--zinc-900);
+      border-radius: 12px; padding: 1rem;
+    }
+    .method-box ul { margin: .6rem 0 0 1.1rem; padding: 0; color: var(--zinc-400); line-height: 1.6; font-size: 14px; }
+    .method-box li { margin: .25rem 0; }
+
+    .monitor-card {
+      background: rgba(24,24,27,.2); border: 1px solid rgba(39,39,42,.55);
+      border-radius: 1.3rem; padding: 1.8rem; margin-bottom: 1.8rem;
+    }
+    .percent-num {
+      font-size: clamp(3.8rem, 13vw, 6rem); font-weight: 900; color: var(--amber);
+      line-height: .9; letter-spacing: -.05em;
+    }
+    .progress-track {
+      width: 100%; height: 2.7rem; border-radius: 2rem; border: 1px solid var(--zinc-900);
+      background: var(--zinc-950); padding: .45rem;
+    }
+    #progress-bar {
+      height: 100%; width: 0%; border-radius: 2rem; background: var(--amber); transition: width .8s ease;
+    }
+    .status-row {
+      margin-top: .9rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: .8rem;
+      color: var(--zinc-400); font-size: 12px;
+    }
+    .ok { color: var(--ok); font-weight: 700; }
+    .warn { color: var(--amber); font-weight: 700; }
+    .err { color: var(--err); font-weight: 700; }
+
+    .social-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 1.8rem; }
+    .action-btn {
+      padding: 11px 16px; border-radius: 8px; font-weight: 700; text-transform: uppercase; font-size: 11px;
+      border: none; text-decoration: none; cursor: pointer;
+    }
+    .btn-primary { background: var(--amber); color: #000; }
+    .btn-secondary { background: var(--zinc-900); color: #fff; border: 1px solid var(--zinc-800); }
+
+    .distro-panel {
+      background: rgba(9,9,11,.4); border: 1px solid var(--zinc-900); border-radius: 1rem;
+      padding: 1.2rem; display: flex; flex-wrap: wrap; align-items: center; gap: 1.2rem; margin-bottom: 2.1rem;
+    }
+    #qr-container {
+      width: 140px; height: 140px; background: #fff; border: 4px solid var(--amber); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; padding: 10px; margin: 0 auto; flex-shrink: 0;
+    }
+    #qr-container img { width: 100%; height: 100%; }
+
+    #source-feed { max-height: 560px; overflow-y: auto; padding-right: 8px; }
+    .news-card {
+      background: rgba(9,9,11,.2); border-left: 3px solid var(--zinc-800); border-radius: 0 10px 10px 0;
+      padding: 16px; margin-bottom: 12px;
+    }
+    .news-title { margin: 10px 0 8px; color: #fff; font-size: 1rem; line-height: 1.35; }
+    .news-desc { margin: 0 0 8px; color: var(--zinc-400); font-size: 14px; line-height: 1.5; }
+
     #copy-toast {
-      visibility: hidden;
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--amber);
-      color: #000;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-weight: 800;
+      visibility: hidden; position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+      background: var(--amber); color: #000; border-radius: 8px; padding: 10px 14px; font-weight: 800; font-size: 12px;
       z-index: 10000;
-      font-size: 12px;
     }
     #copy-toast.show { visibility: visible; }
-
-    .small-note { font-size: 12px; color: var(--zinc-400); }
   </style>
 </head>
 <body>
@@ -239,63 +115,56 @@
     <div class="bar-inner">
       <div class="disclosure-tag">
         <div style="width:8px;height:8px;background:var(--amber);border-radius:50%;" class="pulse"></div>
-        Public Data Monitor
+        AI-Assisted Build + Human Curated
       </div>
-      <p class="mono" style="font-size:10px;color:rgba(245,158,11,0.72);margin:0;text-transform:uppercase;">
-        Transparent Method + Source Links
+      <p class="mono" style="margin:0;font-size:10px;color:rgba(245,158,11,.85);text-transform:uppercase;">
+        This site uses AI assistance and should be treated as an analysis tool, not official fact.
       </p>
     </div>
   </div>
 
-  <div id="copy-toast" class="mono" role="status" aria-live="polite">COPIED</div>
+  <div id="copy-toast" class="mono" role="status" aria-live="polite">Copied</div>
 
   <div class="max-w-3xl">
     <header>
-      <div style="border:1px solid rgba(245,158,11,0.3);background:rgba(245,158,11,0.05);display:inline-block;padding:6px 12px;border-radius:6px;margin-bottom:1rem;">
-        <span class="mono" style="color:var(--amber);font-weight:700;font-size:11px;letter-spacing:0.12em;">STATUS: MONITORING GLOBAL POWER CONCENTRATION</span>
+      <div style="display:inline-block;border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.05);padding:6px 12px;border-radius:6px;margin-bottom:1rem;">
+        <span class="mono" style="color:var(--amber);font-size:11px;letter-spacing:.12em;font-weight:700;">● STATUS: MONITORING GLOBAL POWER CONSOLIDATION</span>
       </div>
-
       <h1>Global Control Index</h1>
-
       <p class="hero-p">
-        This public index tracks concentration of geopolitical control into a small number of dominant blocs.
+        This index estimates how far the world has shifted from many independent decision-making states toward fewer dominant power blocs.
       </p>
-      <p style="text-align:left;color:#a1a1aa;line-height:1.65;margin:0;">
-        100% represents a world where meaningful sovereign autonomy is extremely limited for most territories.
+      <p class="hero-p" style="margin-bottom:0;">
+        Think of it as a public “concentration meter”: higher values mean more power centralized in fewer centers of control.
       </p>
 
       <div class="method-box">
-        <div class="mono" style="font-size:11px;color:var(--zinc-400);font-weight:700;text-transform:uppercase;margin-bottom:8px;">
-          Methodology (Public)
-        </div>
-        <p class="method-text">
-          Score updates come from a published dataset (`/data/latest.json`) and linked sources (`/data/feed.json`).
-          The model can be revised, but each published update includes timestamp + source references.
-        </p>
+        <div class="mono" style="font-size:11px;text-transform:uppercase;font-weight:700;color:var(--zinc-400);">Methodology (Plain Language)</div>
+        <ul>
+          <li>We score major indicators: military reach, economic dependency, political alignment pressure, and loss of local policy autonomy.</li>
+          <li>Each update combines published data + source-linked events, then outputs one percentage score.</li>
+          <li>Movement near the top of the scale is intentionally harder, to reflect real-world resistance and friction.</li>
+          <li>Every update includes a timestamp and source links so visitors can verify context.</li>
+        </ul>
       </div>
     </header>
 
     <section class="monitor-card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
-        <span class="mono" style="color:var(--zinc-400);text-transform:uppercase;font-size:12px;">Consolidation Status</span>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
+        <span class="mono" style="font-size:12px;color:var(--zinc-400);text-transform:uppercase;">Consolidation Status</span>
         <span id="percent-text" class="percent-num mono">--.-%</span>
       </div>
-
-      <div class="progress-track" aria-label="Index progress bar">
-        <div id="progress-bar"></div>
-      </div>
-
+      <div class="progress-track"><div id="progress-bar"></div></div>
       <div class="status-row mono">
         <span>Last Updated: <span id="last-update">loading...</span></span>
-        <span>Refresh: every 15 min</span>
-        <span id="api-status" class="warn" aria-live="polite">Initializing</span>
+        <span>Auto Refresh: every 15 min</span>
+        <span id="api-status" class="warn">Initializing</span>
       </div>
-
-      <p id="confidence-text" class="small-note mono" style="margin-top:10px;margin-bottom:0;">Confidence: --</p>
+      <p id="confidence-text" class="mono" style="font-size:12px;color:var(--zinc-400);margin:.55rem 0 0;">Confidence: --</p>
     </section>
 
     <div class="social-grid">
-      <button id="copy-link-btn" class="action-btn btn-primary" type="button">Copy Site Link</button>
+      <button id="copy-link-btn" type="button" class="action-btn btn-primary">Copy Site Link</button>
       <a id="share-x" target="_blank" rel="noopener noreferrer" class="action-btn btn-secondary" href="#">X</a>
       <a id="share-fb" target="_blank" rel="noopener noreferrer" class="action-btn btn-secondary" href="#">Facebook</a>
       <a id="share-wa" target="_blank" rel="noopener noreferrer" class="action-btn btn-secondary" href="#">WhatsApp</a>
@@ -304,269 +173,260 @@
 
     <div class="distro-panel">
       <div style="flex:1;min-width:250px;">
-        <p class="mono" style="color:var(--zinc-400);font-weight:700;text-transform:uppercase;font-size:12px;margin:0;">
-          System Distribution
-        </p>
-        <input id="embed-code" readonly style="width:100%;background:#000;border:1px solid var(--zinc-900);color:var(--zinc-400);padding:12px;border-radius:6px;font-size:11px;margin-top:0.75rem;" class="mono">
+        <p class="mono" style="margin:0;color:var(--zinc-400);font-size:12px;font-weight:700;text-transform:uppercase;">System Distribution</p>
+        <input id="embed-code" readonly class="mono" style="width:100%;margin-top:.75rem;background:#000;border:1px solid var(--zinc-900);color:var(--zinc-400);padding:12px;border-radius:6px;font-size:11px;">
       </div>
-
-      <div id="qr-container">
-        <img id="qr-image" src="" alt="QR code linking to this page">
-      </div>
+      <div id="qr-container"><img id="qr-image" src="" alt="QR code for this site"></div>
     </div>
 
-    <section style="margin-bottom:3rem;">
-      <h2 class="mono" style="color:#fff;margin:0 0 1rem 0;font-size:14px;text-transform:uppercase;">Live Activity Sources</h2>
-      <div id="source-feed" aria-live="polite">
-        <div style="text-align:center;padding:2.5rem;color:#71717a;" class="mono pulse">Loading source feed...</div>
+    <section style="margin-bottom:2.8rem;">
+      <h2 class="mono" style="margin:0 0 1rem;color:#fff;font-size:14px;text-transform:uppercase;">Live Crisis Activity Log</h2>
+      <div id="source-feed">
+        <div style="text-align:center;padding:2.5rem;color:#71717a;" class="mono pulse">Connecting to global data stream...</div>
       </div>
-      <button id="retry-btn" type="button" style="display:none;width:100%;margin-top:1rem;border:1px solid #78350f;background:transparent;color:var(--amber);padding:12px;border-radius:8px;" class="mono">
-        Retry Data Sync
+      <button id="retry-btn" type="button" class="mono" style="display:none;width:100%;margin-top:1rem;border:1px solid #78350f;background:transparent;color:var(--amber);padding:12px;border-radius:8px;">
+        Force Feed Re-Sync
       </button>
     </section>
   </div>
 
   <script>
-    // ---- Config: local JSON files that you can update manually or via GitHub Actions ----
     const CONFIG = {
-      scoreUrl: "./data/latest.json",
-      feedUrl: "./data/feed.json",
+      scoreUrl: "./data/latest.json", // your maintained score file
+      fallbackFeedUrl: "./data/feed.json", // optional fallback local feed
       refreshMs: 15 * 60 * 1000,
-      maxFeedItems: 12
+      maxFeedItems: 14
     };
 
     const dom = {
-      percentText: document.getElementById("percent-text"),
-      progressBar: document.getElementById("progress-bar"),
-      lastUpdate: document.getElementById("last-update"),
+      percent: document.getElementById("percent-text"),
+      bar: document.getElementById("progress-bar"),
+      updated: document.getElementById("last-update"),
       confidence: document.getElementById("confidence-text"),
       status: document.getElementById("api-status"),
       feed: document.getElementById("source-feed"),
       retry: document.getElementById("retry-btn"),
       embed: document.getElementById("embed-code"),
-      toast: document.getElementById("copy-toast"),
-      qr: document.getElementById("qr-image")
+      qr: document.getElementById("qr-image"),
+      toast: document.getElementById("copy-toast")
     };
 
-    function setStatus(text, level) {
+    function setStatus(text, level = "warn") {
       dom.status.textContent = text;
-      dom.status.className = level === "ok" ? "ok" : level === "err" ? "err" : "warn";
+      dom.status.className = level;
     }
-
-    function clampPercent(n) {
-      if (!Number.isFinite(n)) return 0;
-      return Math.min(100, Math.max(0, n));
+    function clamp(v) { return Math.max(0, Math.min(100, Number(v) || 0)); }
+    function fmtDate(v) {
+      const d = new Date(v);
+      return Number.isNaN(d.getTime()) ? "unknown" : d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
     }
-
-    function safeDate(isoOrDate) {
-      const d = new Date(isoOrDate);
-      if (Number.isNaN(d.getTime())) return "unknown";
-      return d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
-    }
-
-    function isSafeUrl(url) {
-      try {
-        const u = new URL(url, window.location.href);
-        return u.protocol === "http:" || u.protocol === "https:";
-      } catch {
-        return false;
-      }
-    }
-
-    function shortText(s, max = 220) {
-      const t = String(s ?? "").trim();
+    function short(s, max) {
+      const t = String(s || "").trim();
       if (!t) return "No description provided.";
       return t.length > max ? t.slice(0, max - 1).trimEnd() + "..." : t;
     }
-
-    function escapeText(t) {
-      return String(t ?? "");
+    function safeHttpUrl(url) {
+      try {
+        const u = new URL(url, window.location.href);
+        return u.protocol === "http:" || u.protocol === "https:" ? u.href : "";
+      } catch { return ""; }
     }
 
-    function showToast(msg) {
+    function toast(msg) {
       dom.toast.textContent = msg;
       dom.toast.classList.add("show");
-      window.setTimeout(() => dom.toast.classList.remove("show"), 1800);
+      setTimeout(() => dom.toast.classList.remove("show"), 1700);
     }
 
-    async function copyToClipboard(text, label) {
+    async function copyText(text, label) {
       try {
         if (navigator.clipboard && window.isSecureContext) {
           await navigator.clipboard.writeText(text);
         } else {
-          const area = document.createElement("textarea");
-          area.value = text;
-          area.style.position = "fixed";
-          area.style.left = "-9999px";
-          document.body.appendChild(area);
-          area.focus();
-          area.select();
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.focus(); ta.select();
           document.execCommand("copy");
-          area.remove();
+          ta.remove();
         }
-        showToast(label + " copied");
+        toast(label + " copied");
       } catch {
-        showToast("Copy failed");
+        toast("Copy failed");
       }
     }
 
-    function renderScore(payload) {
-      const rawScore = Number(payload?.score);
-      const score = clampPercent(rawScore);
-      const display = score.toFixed(1) + "%";
-      dom.percentText.textContent = display;
-      dom.progressBar.style.width = score + "%";
-      dom.lastUpdate.textContent = safeDate(payload?.updated_at);
-      dom.confidence.textContent = "Confidence: " + (payload?.confidence ?? "not provided");
+    function renderScore(data) {
+      const score = clamp(data && data.score);
+      dom.percent.textContent = score.toFixed(1) + "%";
+      dom.bar.style.width = score + "%";
+      dom.updated.textContent = fmtDate(data && data.updated_at);
+      dom.confidence.textContent = "Confidence: " + (data && data.confidence ? data.confidence : "not provided");
+    }
+
+    function cardTag(text) {
+      const t = document.createElement("span");
+      t.className = "mono";
+      t.style.cssText = "color:var(--amber);font-size:10px;font-weight:700;background:rgba(245,158,11,.1);padding:3px 8px;border-radius:4px;";
+      t.textContent = text || "SHIFT";
+      return t;
     }
 
     function renderFeed(items) {
       dom.feed.innerHTML = "";
-      if (!Array.isArray(items) || items.length === 0) {
+      if (!Array.isArray(items) || !items.length) {
         const empty = document.createElement("div");
         empty.className = "mono";
-        empty.style.color = "#71717a";
-        empty.style.padding = "1.5rem";
-        empty.textContent = "No source items published yet.";
+        empty.style.cssText = "padding:1.5rem;color:#71717a;";
+        empty.textContent = "No live items available right now.";
         dom.feed.appendChild(empty);
         return;
       }
 
       items.slice(0, CONFIG.maxFeedItems).forEach((item) => {
-        const card = document.createElement("article");
-        card.className = "news-card";
+        const wrap = document.createElement("article");
+        wrap.className = "news-card";
+        wrap.appendChild(cardTag(item.category || "SHIFT"));
 
-        const tag = document.createElement("span");
-        tag.className = "mono";
-        tag.style.color = "var(--amber)";
-        tag.style.fontSize = "10px";
-        tag.style.fontWeight = "700";
-        tag.style.background = "rgba(245,158,11,0.1)";
-        tag.style.padding = "3px 8px";
-        tag.style.borderRadius = "4px";
-        tag.textContent = escapeText(item?.category || "SOURCE");
-        card.appendChild(tag);
+        const h = document.createElement("h3");
+        h.className = "news-title";
+        h.textContent = short(item.title, 150);
+        wrap.appendChild(h);
 
-        const title = document.createElement("h3");
-        title.className = "news-title";
-        title.textContent = shortText(item?.title || "Untitled item", 140);
-        card.appendChild(title);
+        const p = document.createElement("p");
+        p.className = "news-desc";
+        p.textContent = short(item.summary || item.seendate || "", 220);
+        wrap.appendChild(p);
 
-        const desc = document.createElement("p");
-        desc.className = "news-desc";
-        desc.textContent = shortText(item?.summary || item?.description || "", 220);
-        card.appendChild(desc);
+        const m = document.createElement("p");
+        m.className = "mono";
+        m.style.cssText = "margin:0 0 10px;font-size:11px;color:#71717a;";
+        m.textContent = (item.source_name || "Source") + " · " + fmtDate(item.published_at || item.seendate);
+        wrap.appendChild(m);
 
-        const meta = document.createElement("p");
-        meta.className = "mono";
-        meta.style.fontSize = "11px";
-        meta.style.color = "#71717a";
-        meta.style.margin = "0 0 10px";
-        const sourceName = escapeText(item?.source_name || "Unknown source");
-        const published = safeDate(item?.published_at);
-        meta.textContent = sourceName + " · " + published;
-        card.appendChild(meta);
-
-        if (isSafeUrl(item?.url)) {
+        const url = safeHttpUrl(item.url);
+        if (url) {
           const a = document.createElement("a");
-          a.href = item.url;
+          a.href = url;
           a.target = "_blank";
           a.rel = "noopener noreferrer";
           a.className = "mono";
-          a.style.color = "var(--amber)";
-          a.style.fontSize = "12px";
-          a.style.textDecoration = "none";
-          a.style.fontWeight = "700";
-          a.textContent = "Verify source ↗";
-          card.appendChild(a);
+          a.style.cssText = "color:var(--amber);font-size:12px;text-decoration:none;font-weight:700;";
+          a.textContent = "Verify Source ↗";
+          wrap.appendChild(a);
         }
 
-        dom.feed.appendChild(card);
+        dom.feed.appendChild(wrap);
       });
     }
 
-    function cacheData(key, data) {
-      try { localStorage.setItem(key, JSON.stringify(data)); } catch {}
+    // Live feed without exposing API keys
+    async function fetchLiveFeed() {
+      const q = encodeURIComponent('(geopolitics OR annexation OR sanctions OR "sphere of influence" OR "military alliance" OR "regime change") lang:english');
+      const url = `https://api.gdeltproject.org/api/v2/doc/doc?query=${q}&mode=ArtList&maxrecords=30&format=json&sort=DateDesc`;
+
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error("live feed failed");
+      const data = await res.json();
+
+      const arts = Array.isArray(data.articles) ? data.articles : [];
+      return arts.map((a) => ({
+        title: a.title || "Untitled",
+        summary: a.seendate ? "Detected in live global media stream." : "",
+        url: a.url || "",
+        source_name: a.domain || "Live source",
+        published_at: a.seendate || "",
+        category: "LIVE"
+      }));
     }
 
-    function readCache(key) {
-      try {
-        const raw = localStorage.getItem(key);
-        return raw ? JSON.parse(raw) : null;
-      } catch {
-        return null;
-      }
+    async function fetchFallbackFeed() {
+      const res = await fetch(CONFIG.fallbackFeedUrl, { cache: "no-store" });
+      if (!res.ok) return [];
+      const data = await res.json();
+      return Array.isArray(data.items) ? data.items : [];
     }
 
-    async function loadData() {
-      setStatus("Syncing", "warn");
+    async function fetchScore() {
+      const res = await fetch(CONFIG.scoreUrl, { cache: "no-store" });
+      if (!res.ok) throw new Error("score fetch failed");
+      return res.json();
+    }
+
+    function saveCache(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
+    function loadCache(key) { try { const x = localStorage.getItem(key); return x ? JSON.parse(x) : null; } catch { return null; } }
+
+    async function refreshAll() {
+      setStatus("Syncing...", "warn");
       dom.retry.style.display = "none";
 
-      const [scoreRes, feedRes] = await Promise.all([
-        fetch(CONFIG.scoreUrl, { cache: "no-store" }),
-        fetch(CONFIG.feedUrl, { cache: "no-store" })
-      ]);
-
-      if (!scoreRes.ok) throw new Error("score fetch failed");
-      if (!feedRes.ok) throw new Error("feed fetch failed");
-
-      const scorePayload = await scoreRes.json();
-      const feedPayload = await feedRes.json();
-
-      // Expected:
-      // latest.json: { "score": 74.2, "updated_at":"2026-03-19T16:00:00Z", "confidence":"medium" }
-      // feed.json: { "items": [ ... ] }
-
-      renderScore(scorePayload);
-      renderFeed(feedPayload?.items || []);
-      cacheData("gci_latest_score", scorePayload);
-      cacheData("gci_latest_feed", feedPayload);
-      setStatus("Live", "ok");
-    }
-
-    function loadFromCache() {
-      const score = readCache("gci_latest_score");
-      const feed = readCache("gci_latest_feed");
-      if (score) renderScore(score);
-      if (feed?.items) renderFeed(feed.items);
-    }
-
-    async function refresh() {
       try {
-        await loadData();
+        const score = await fetchScore();
+        renderScore(score);
+        saveCache("gci_score", score);
       } catch {
-        loadFromCache();
-        setStatus("Offline data", "err");
-        dom.retry.style.display = "block";
+        const c = loadCache("gci_score");
+        if (c) renderScore(c);
+      }
+
+      try {
+        const liveItems = await fetchLiveFeed();
+        if (!liveItems.length) throw new Error("empty live feed");
+        renderFeed(liveItems);
+        saveCache("gci_feed", liveItems);
+        setStatus("Feed: LIVE", "ok");
+      } catch {
+        try {
+          const fallback = await fetchFallbackFeed();
+          if (fallback.length) {
+            renderFeed(fallback);
+            saveCache("gci_feed", fallback);
+            setStatus("Feed: FALLBACK", "warn");
+          } else {
+            throw new Error("no fallback");
+          }
+        } catch {
+          const cache = loadCache("gci_feed");
+          if (cache && cache.length) {
+            renderFeed(cache);
+            setStatus("Feed: CACHED", "warn");
+          } else {
+            renderFeed([]);
+            setStatus("Sync blocked", "err");
+            dom.retry.style.display = "block";
+          }
+        }
       }
     }
 
-    function setupSharing() {
+    function setupShareAndEmbed() {
       const currentUrl = window.location.href;
-      const encodedUrl = encodeURIComponent(currentUrl);
-      const shareText = encodeURIComponent("Global Control Index");
+      const encoded = encodeURIComponent(currentUrl);
+      const text = encodeURIComponent("Global Control Index");
 
-      document.getElementById("share-x").href = `https://x.com/intent/tweet?url=${encodedUrl}&text=${shareText}`;
-      document.getElementById("share-fb").href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
-      document.getElementById("share-wa").href = `https://api.whatsapp.com/send?text=${shareText}%20${encodedUrl}`;
-      document.getElementById("share-reddit").href = `https://reddit.com/submit?url=${encodedUrl}&title=${shareText}`;
+      document.getElementById("share-x").href = `https://x.com/intent/tweet?url=${encoded}&text=${text}`;
+      document.getElementById("share-fb").href = `https://www.facebook.com/sharer/sharer.php?u=${encoded}`;
+      document.getElementById("share-wa").href = `https://api.whatsapp.com/send?text=${text}%20${encoded}`;
+      document.getElementById("share-reddit").href = `https://reddit.com/submit?url=${encoded}&title=${text}`;
 
       dom.embed.value = `<iframe src="${currentUrl}" width="100%" height="700" loading="lazy" referrerpolicy="no-referrer"></iframe>`;
-      dom.qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodedUrl}`;
+      dom.qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encoded}`;
 
-      document.getElementById("copy-link-btn").addEventListener("click", () => copyToClipboard(currentUrl, "Link"));
-      dom.embed.addEventListener("click", () => copyToClipboard(dom.embed.value, "Embed code"));
-      dom.retry.addEventListener("click", refresh);
+      document.getElementById("copy-link-btn").addEventListener("click", () => copyText(currentUrl, "Link"));
+      dom.embed.addEventListener("click", () => copyText(dom.embed.value, "Embed code"));
+      dom.retry.addEventListener("click", refreshAll);
     }
 
     document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") refresh();
+      if (document.visibilityState === "visible") refreshAll();
     });
 
     document.addEventListener("DOMContentLoaded", () => {
-      setupSharing();
-      refresh();
-      window.setInterval(refresh, CONFIG.refreshMs);
+      setupShareAndEmbed();
+      refreshAll();
+      setInterval(refreshAll, CONFIG.refreshMs);
     });
   </script>
 </body>
