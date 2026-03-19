@@ -3,16 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GCI | Global Control Tracker</title>
     
+    <title id="dynamic-title">GCI | Global Control Tracker</title>
+    <meta name="description" content="Monitoring the transition of independent nations into unified superstate blocs.">
+    <meta property="og:type" content="website">
+    <meta id="og-title" property="og:title" content="Global Control Index | Live Monitoring">
+    <meta id="og-desc" property="og:description" content="Tracking the consolidation of global power into superstate cores.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"> 
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAn0lEQVR42mP8z8AARCAWAmIuIOYCYiYgZgZiJiBmAmIWIAYpBAmAlIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBAD0YQeA9Q665QAAAABJRU5ErkJggg==">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #050505; color: #d4d4d8; scroll-behavior: smooth; overflow-x: hidden; }
         .mono { font-family: 'JetBrains Mono', monospace; }
         
-        /* PROGRESS BAR ANIMATIONS */
         .progress-glow { 
             box-shadow: 0 0 40px rgba(245, 158, 11, 0.4); 
             position: relative;
@@ -27,21 +36,19 @@
         .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
 
-        /* SCROLLING NEWS LIST */
         #source-feed::-webkit-scrollbar { width: 4px; }
         #source-feed::-webkit-scrollbar-track { background: #0a0a0a; }
         #source-feed::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
         #source-feed::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
 
-        /* TOAST NOTIFICATION */
         #copy-toast {
             visibility: hidden; position: fixed; bottom: 30px; left: 50%;
             transform: translateX(-50%); background: #f59e0b; color: black;
             padding: 8px 16px; border-radius: 4px; font-weight: bold; z-index: 100;
         }
         #copy-toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        
+        #qrcode img { margin: 0 auto; border: 4px solid #f59e0b; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -50,7 +57,7 @@
         <div class="max-w-3xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="w-2 h-2 rounded-full bg-amber-500 pulse"></div>
-                <p class="text-[10px] font-bold mono uppercase tracking-[0.2em] text-amber-500">System Architecture Disclosure</p>
+                <p class="text-[10px] font-bold mono uppercase tracking-[0.2em] text-amber-500 text-xs md:text-sm">System Architecture Disclosure</p>
             </div>
             <p class="text-[9px] mono text-amber-200/50 text-right leading-tight uppercase">
                 Designed with the assistance of <span class="text-amber-500 font-black">Google Gemini AI</span>
@@ -58,7 +65,7 @@
         </div>
     </div>
 
-    <div id="copy-toast" class="mono text-[10px] uppercase tracking-tighter text-black">Link Copied</div>
+    <div id="copy-toast" class="mono text-[10px] uppercase tracking-tighter text-black">Data Copied</div>
 
     <div class="max-w-3xl mx-auto px-6">
         
@@ -79,7 +86,7 @@
                 <div class="bg-zinc-950/50 p-5 border border-zinc-900 rounded-xl text-left">
                     <p class="text-[11px] text-zinc-600 uppercase mb-2 mono tracking-widest font-bold">Methodology & Development</p>
                     <p class="text-xs text-zinc-500 leading-relaxed italic">
-                        This index is an ongoing monitoring system currently under development. The percentage is calculated using a non-linear scale that weighs kinetic military presence, the capture of regional trade ledgers, and the dissolution of local administrative borders. Because the resistance of remaining sovereign states increases as control tightens, movements above 80% are modeled to be significantly more difficult to achieve, ensuring the data reflects real-world friction rather than linear projection.
+                        This index is an ongoing monitoring system currently under development. The percentage is calculated using a non-linear scale that weighs kinetic military presence, the capture of regional trade ledgers, and the dissolution of local administrative borders. Movements above 80% reflect the final erosion of global friction.
                     </p>
                 </div>
             </div>
@@ -101,18 +108,29 @@
             </div>
         </section>
 
-        <section class="mb-20 space-y-8">
+        <section class="mb-20 space-y-12">
             <div class="flex flex-wrap gap-2 justify-center">
-                <button onclick="copyToClipboard()" class="px-5 py-2.5 bg-amber-500 text-black rounded text-[10px] font-bold uppercase mono hover:bg-amber-400 transition-all">Copy Site Link</button>
-                <a id="share-x" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono hover:bg-white hover:text-black transition-all">Share on X</a>
-                <a id="share-fb" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono hover:bg-blue-600 hover:text-white transition-all">Facebook</a>
-                <a id="share-reddit" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono hover:bg-orange-600 hover:text-white transition-all">Reddit</a>
-                <a id="share-wa" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono hover:bg-green-600 hover:text-white transition-all">WhatsApp</a>
+                <button onclick="copyToClipboard(window.location.href, 'Link')" class="px-5 py-2.5 bg-amber-500 text-black rounded text-[10px] font-bold uppercase mono hover:bg-amber-400">Copy Site Link</button>
+                <a id="share-x" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono hover:text-white">Share on X</a>
+                <a id="share-fb" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono hover:bg-blue-600 hover:text-white">Facebook</a>
             </div>
 
-            <div class="max-w-md mx-auto text-center space-y-3">
-                <p class="text-[9px] text-zinc-600 uppercase mb-1 mono tracking-widest">Embed Tracker on Third-Party Site</p>
-                <input id="embed-code" readonly class="w-full bg-zinc-950 border border-zinc-900 text-zinc-700 text-[10px] px-4 py-2 rounded mono focus:outline-none text-center cursor-pointer hover:border-zinc-700 transition-colors">
+            <div class="grid md:grid-cols-2 gap-8 items-center bg-zinc-950/30 p-8 rounded-2xl border border-zinc-900">
+                <div class="text-center md:text-left space-y-4">
+                    <p class="text-[11px] text-zinc-600 uppercase mono tracking-widest font-bold">System Distribution</p>
+                    <p class="text-xs text-zinc-500 leading-relaxed">
+                        Generate a localized tracking gateway. Scan to distribute this index via physical media or mobile-to-mobile transmission.
+                    </p>
+                    <div class="relative group max-w-sm mx-auto md:mx-0">
+                        <input id="embed-code" readonly onclick="copyToClipboard(this.value, 'Embed Code')" 
+                               class="w-full bg-zinc-900 border border-zinc-800 text-zinc-600 text-[10px] px-4 py-2 rounded mono cursor-pointer">
+                        <span class="absolute right-3 top-2 text-[8px] text-zinc-700 mono uppercase">Embed Code</span>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div id="qrcode"></div>
+                    <p class="mt-4 text-[9px] text-amber-900 mono uppercase font-bold tracking-widest">Live QR Gateway</p>
+                </div>
             </div>
         </section>
 
@@ -121,27 +139,22 @@
                 <h2 class="text-xs uppercase tracking-[0.3em] text-white font-bold mono">Live Crisis Activity Log</h2>
                 <div class="h-px bg-zinc-800 flex-grow"></div>
             </div>
-            
             <div id="source-feed" class="space-y-4 max-h-[650px] overflow-y-auto pr-4">
                 <div class="text-center py-20 mono text-xs text-zinc-700 italic animate-pulse tracking-widest uppercase">
-                    Syncing with global networks...
+                    Syncing global satellite news...
                 </div>
-            </div>
-            
-            <div class="mt-8 text-center border-t border-zinc-900 pt-6">
-                <p class="text-[9px] text-zinc-800 mono uppercase tracking-[0.4em]">End of visible record // Tracking continues in background</p>
             </div>
         </section>
 
         <footer class="pb-12 text-center opacity-20 hover:opacity-100 transition-opacity">
-            <p class="text-[10px] uppercase tracking-[0.3em] text-zinc-800 mono italic">GCI Independent Awareness Project // March 2026</p>
+            <p class="text-[10px] uppercase tracking-[0.3em] text-zinc-800 mono italic">GCI Independent Awareness Project // 2026</p>
         </footer>
     </div>
 
     <script>
         const CONFIG = {
             indexPercent: 74.2, 
-            updateDate: "March 19, 2026",
+            updateDate: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
             newsDataKey: "pub_bbb79c103a7f4462b6ef5b204a8e14db", 
             gNewsKey: "8403b5973e11d28dbe0b7420a558d4ce",
             cacheLimit: 60 * 60 * 1000 
@@ -151,7 +164,6 @@
             const feed = document.getElementById('source-feed');
             const status = document.getElementById('api-status');
             const now = new Date().getTime();
-
             const cache = localStorage.getItem('gci_news_cache');
             const ts = localStorage.getItem('gci_news_ts');
 
@@ -170,34 +182,21 @@
                 let articles = [];
 
                 if (data.results && data.results.length > 0) {
-                    articles = data.results.map(a => ({
-                        tag: "Consolidation Shift",
-                        title: a.title,
-                        desc: a.description || "Intelligence details restricted.",
-                        url: a.link
-                    }));
+                    articles = data.results.map(a => ({ tag: "Consolidation Shift", title: a.title, desc: a.description || "Intelligence details restricted.", url: a.link }));
                 } else {
                     response = await fetch(`https://gnews.io/api/v4/search?q=geopolitics&lang=en&apikey=${CONFIG.gNewsKey}`);
                     data = await response.json();
-                    articles = data.articles.map(a => ({
-                        tag: "Vector Alert",
-                        title: a.title,
-                        desc: a.description,
-                        url: a.url
-                    }));
+                    articles = data.articles.map(a => ({ tag: "Vector Alert", title: a.title, desc: a.description, url: a.url }));
                 }
 
                 localStorage.setItem('gci_news_cache', JSON.stringify(articles));
                 localStorage.setItem('gci_news_ts', now);
-                
                 renderFeed(articles);
                 status.innerText = "Feed: Synchronized";
                 status.classList.remove('pulse', 'text-amber-600');
-
             } catch (err) {
-                console.error(err);
-                status.innerText = "Feed: Offline (Limits Met)";
-                feed.innerHTML = '<div class="text-center py-10 mono text-[10px] text-zinc-800 uppercase italic">Data extraction failed. Retrying in 60m.</div>';
+                status.innerText = "Feed: Offline";
+                feed.innerHTML = '<div class="text-center py-10 mono text-[10px] text-zinc-800 uppercase italic">Network Interrupted.</div>';
             }
         }
 
@@ -207,43 +206,39 @@
             articles.forEach(item => {
                 const card = document.createElement('div');
                 card.className = "group p-6 border-l-2 border-zinc-900 bg-zinc-950/20 hover:border-amber-500 hover:bg-zinc-900/20 transition-all rounded-r-lg";
-                card.innerHTML = `
-                    <div class="flex items-center gap-3 mb-2">
-                        <span class="text-[9px] font-black px-2 py-0.5 bg-amber-900/10 text-amber-500 rounded border border-amber-900/30 mono uppercase tracking-tighter">${item.tag}</span>
-                    </div>
-                    <h4 class="text-lg font-semibold text-zinc-100 mb-1 group-hover:text-amber-400 transition-colors leading-tight">${item.title}</h4>
-                    <p class="text-zinc-500 text-sm mb-4 leading-relaxed">${item.desc}</p>
-                    <a href="${item.url}" target="_blank" class="text-[10px] text-amber-600 hover:text-amber-400 mono uppercase font-bold tracking-widest border-b border-amber-900/50 pb-0.5">Verify Source ↗</a>
-                `;
+                card.innerHTML = `<div class="flex items-center gap-3 mb-2"><span class="text-[9px] font-black px-2 py-0.5 bg-amber-900/10 text-amber-500 rounded border border-amber-900/30 mono uppercase tracking-tighter">${item.tag}</span></div><h4 class="text-lg font-semibold text-zinc-100 mb-1 leading-tight">${item.title}</h4><p class="text-zinc-500 text-sm mb-4 leading-relaxed">${item.desc}</p><a href="${item.url}" target="_blank" class="text-[10px] text-amber-600 mono uppercase font-bold tracking-widest border-b border-amber-900/50 pb-0.5">Verify Source ↗</a>`;
                 feed.appendChild(card);
             });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             const currentUrl = window.location.href;
+            const shareTitle = `Global Control Index: ${CONFIG.indexPercent}%`;
             
+            document.title = shareTitle;
+            document.getElementById('og-title').setAttribute('content', shareTitle);
+
+            // ANIMATE BAR
             setTimeout(() => {
                 document.getElementById('progress-bar').style.width = CONFIG.indexPercent + "%";
                 document.getElementById('percent-text').innerText = CONFIG.indexPercent + "%";
             }, 500);
+            
             document.getElementById('last-update').innerText = CONFIG.updateDate;
-            
-            // CONFIGURE SHARING LINKS
-            const shareText = `The Global Control Index is at ${CONFIG.indexPercent}%. The era of independent nations is closing. Monitor live here: `;
-            document.getElementById('share-x').href = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(currentUrl)}`;
+            document.getElementById('share-x').href = `https://x.com/intent/tweet?text=${encodeURIComponent(shareTitle + " | Monitor here: ")}&url=${encodeURIComponent(currentUrl)}`;
             document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`;
-            document.getElementById('share-reddit').href = `https://reddit.com/submit?url=${encodeURIComponent(currentUrl)}&title=${encodeURIComponent(shareText)}`;
-            document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + currentUrl)}`;
-            
-            // CONFIGURE EMBED CODE
             document.getElementById('embed-code').value = `<iframe src="${currentUrl}" width="100%" height="650" style="border:none;"></iframe>`;
             
+            // GENERATE QR CODE
+            new QRCode(document.getElementById("qrcode"), { text: currentUrl, width: 128, height: 128, colorDark: "#f59e0b", colorLight: "transparent", correctLevel: QRCode.CorrectLevel.H });
+
             fetchNews();
         });
 
-        function copyToClipboard() {
-            navigator.clipboard.writeText(window.location.href);
+        function copyToClipboard(text, type) {
+            navigator.clipboard.writeText(text);
             const toast = document.getElementById("copy-toast");
+            toast.innerText = `${type} Copied`;
             toast.className = "show mono text-[10px] uppercase";
             setTimeout(() => { toast.className = ""; }, 3000);
         }
