@@ -4,227 +4,223 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <title>GCI | Global Control Tracker</title>
+    
+    <title id="dynamic-title">GCI | Global Control Tracker</title>
     
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Global Control Index | Live Monitoring">
-    <meta property="og:description" content="Tracking the consolidation of global power into superstate cores.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop">
+    <meta id="og-title" property="og:title" content="Global Control Index | Live Monitoring">
+    <meta id="og-desc" property="og:description" content="Tracking the consolidation of global power into superstate cores.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"> 
+
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAn0lEQVR42mP8z8AARCAWAmIuIOYCYiYgZgZiJiBmAmIWIAYpBAmAlIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBAD0YQeA9Q665QAAAABJRU5ErkJggg==">
 
     <style>
-        :root { --amber: #f59e0b; --zinc-900: #18181b; --zinc-950: #09090b; --zinc-800: #27272a; --zinc-400: #a1a1aa; }
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #050505; color: #d4d4d8; margin: 0; padding: 0; overflow-x: hidden; line-height: 1.5; }
+        :root { --amber: #f59e0b; --zinc-900: #18181b; --zinc-950: #09090b; --zinc-800: #27272a; --zinc-700: #3f3f46; --zinc-400: #a1a1aa; }
+        
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background-color: #050505; color: #d4d4d8; margin: 0; padding: 0; overflow-x: hidden; }
         .mono { font-family: 'JetBrains Mono', 'Courier New', monospace; }
         .max-w-3xl { max-width: 48rem; margin: 0 auto; padding: 0 1.5rem; }
         
-        /* TOP BAR */
-        .system-bar { width: 100%; background: rgba(245, 158, 11, 0.1); border-bottom: 1px solid rgba(245, 158, 11, 0.2); padding: 12px 0; margin-bottom: 2rem; box-sizing: border-box; }
-        .bar-content { display: flex; justify-content: space-between; align-items: center; max-width: 48rem; margin: 0 auto; padding: 0 1.5rem; }
-        .disclosure-text { color: var(--amber); font-weight: bold; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; display: flex; align-items: center; gap: 8px; }
-        .ai-text { font-size: 9px; color: rgba(245,158,11,0.5); text-transform: uppercase; margin: 0; text-align: right; }
-        
-        /* HEADER */
+        /* SYSTEM DISCLOSURE BAR */
+        .system-bar { width: 100%; background: rgba(245, 158, 11, 0.1); border-bottom: 1px solid rgba(245, 158, 11, 0.2); py: 12px; margin-bottom: 2rem; }
+        .bar-inner { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; }
+        .disclosure-tag { color: var(--amber); font-weight: bold; text-transform: uppercase; letter-spacing: 0.2em; font-size: 10px; display: flex; align-items: center; gap: 8px; }
+        .ai-credit { font-size: 9px; color: rgba(245,158,11,0.5); text-transform: uppercase; margin: 0; text-align: right; }
+
+        /* HEADER & METHODOLOGY */
         header { text-align: center; margin-bottom: 4rem; border-bottom: 1px solid var(--zinc-900); padding-bottom: 3rem; }
-        .status-pill { border: 1px solid rgba(245,158,11,0.3); background: rgba(245,158,11,0.05); display: inline-block; padding: 4px 12px; border-radius: 4px; margin-bottom: 1.5rem; }
-        h1 { color: white; font-size: clamp(2.2rem, 8vw, 3.5rem); font-weight: 800; letter-spacing: -2px; margin: 0 0 1.5rem 0; line-height: 1; }
-        .hero-text { font-size: 1.125rem; color: var(--zinc-400); max-width: 40rem; margin: 0 auto 1.5rem auto; text-align: left; }
-        .hero-sub { font-size: 1rem; color: #71717a; text-align: left; }
+        .status-pill { border: 1px solid rgba(245,158,11,0.3); background: rgba(245,158,11,0.05); display: inline-block; padding: 6px 14px; border-radius: 4px; margin-bottom: 1.5rem; }
+        h1 { color: white; font-size: clamp(2.2rem, 8vw, 3.5rem); font-weight: 800; letter-spacing: -0.05em; margin: 0 0 1.5rem 0; line-height: 1; }
+        .hero-p { font-size: 1.125rem; color: var(--zinc-400); text-align: left; line-height: 1.6; margin-bottom: 1.5rem; }
+        .hero-sub { font-size: 1rem; color: #71717a; text-align: left; line-height: 1.6; }
         
-        /* METHODOLOGY */
-        .method-box { background: rgba(9,9,11,0.5); padding: 20px; border: 1px solid var(--zinc-900); border-radius: 12px; text-align: left; margin-top: 2rem; }
-        .method-title { font-size: 11px; color: #52525b; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
-        .method-desc { font-size: 12px; color: #52525b; font-style: italic; margin: 0; line-height: 1.6; }
+        .method-box { background: rgba(9,9,11,0.5); padding: 24px; border: 1px solid var(--zinc-900); border-radius: 12px; text-align: left; margin-top: 2.5rem; }
+        .method-label { font-size: 11px; color: var(--zinc-700); font-weight: bold; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.1em; }
+        .method-text { font-size: 12px; color: var(--zinc-700); font-style: italic; margin: 0; line-height: 1.7; }
 
-        /* MONITOR */
-        .monitor-box { background: rgba(24, 24, 27, 0.2); padding: 2.5rem; border-radius: 1.5rem; border: 1px solid rgba(39, 39, 42, 0.5); margin-bottom: 3rem; }
-        .percent-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; }
-        .percent-val { font-size: clamp(4.5rem, 15vw, 6.5rem); font-weight: 900; color: var(--amber); line-height: 1; letter-spacing: -4px; }
-        .bar-container { width: 100%; background: var(--zinc-950); height: 3.5rem; border-radius: 9999px; padding: 0.6rem; border: 1px solid var(--zinc-900); box-sizing: border-box; }
-        #progress-bar { height: 100%; background: var(--amber); border-radius: 9999px; width: 0%; transition: width 2s ease-out; box-shadow: 0 0 25px rgba(245, 158, 11, 0.4); }
+        /* MONITOR UI */
+        .monitor-card { background: rgba(24, 24, 27, 0.2); padding: 3rem; border-radius: 2rem; border: 1px solid rgba(39, 39, 42, 0.5); margin-bottom: 3rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .percent-display { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; }
+        .percent-num { font-size: clamp(4.5rem, 15vw, 6.5rem); font-weight: 900; color: var(--amber); line-height: 0.9; letter-spacing: -0.05em; }
+        .progress-track { width: 100%; background: var(--zinc-950); height: 3.5rem; border-radius: 2rem; padding: 0.6rem; border: 1px solid var(--zinc-900); }
+        #progress-bar { height: 100%; background: var(--amber); border-radius: 2rem; width: 0%; transition: width 2s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 0 30px rgba(245, 158, 11, 0.3); }
         
-        /* BUTTONS & SHARE */
-        .btn-group { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 3rem; }
-        .btn { padding: 12px 24px; border-radius: 4px; font-weight: bold; text-transform: uppercase; font-size: 10px; cursor: pointer; text-decoration: none; display: inline-block; border: none; letter-spacing: 1px; }
-        .btn-amber { background: var(--amber); color: black; }
-        .btn-zinc { background: var(--zinc-900); color: white; border: 1px solid var(--zinc-800); }
-        
-        /* NEWS LOG */
-        .feed-container { margin-bottom: 6rem; }
-        .feed-item { padding: 24px; border-left: 2px solid var(--zinc-900); background: rgba(9,9,11,0.2); margin-bottom: 1.2rem; border-radius: 0 8px 8px 0; transition: border 0.3s; }
-        .feed-item:hover { border-left-color: var(--amber); }
-        .tag { color: var(--amber); font-weight: bold; background: rgba(245,158,11,0.1); padding: 4px 8px; border-radius: 4px; font-size: 10px; text-transform: uppercase; }
-        .verify-link { color: var(--amber); font-size: 11px; text-decoration: none; font-weight: bold; margin-top: 15px; display: inline-block; border-bottom: 1px solid rgba(245,158,11,0.4); text-transform: uppercase; }
+        /* BUTTONS */
+        .social-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 3.5rem; }
+        .action-btn { padding: 12px 20px; border-radius: 6px; font-weight: bold; text-transform: uppercase; font-size: 10px; cursor: pointer; text-decoration: none; border: none; letter-spacing: 0.05em; transition: all 0.2s; }
+        .btn-primary { background: var(--amber); color: black; }
+        .btn-secondary { background: var(--zinc-900); color: white; border: 1px solid var(--zinc-800); }
+        .action-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
-        /* UI REFINEMENTS */
+        /* DISTRIBUTION PANEL */
+        .distro-panel { background: rgba(9,9,11,0.4); border: 1px solid var(--zinc-900); padding: 2.5rem; border-radius: 1.5rem; display: flex; flex-wrap: wrap; gap: 2.5rem; align-items: center; margin-bottom: 5rem; }
+        .embed-input { width: 100%; background: #000; border: 1px solid var(--zinc-900); color: var(--zinc-700); padding: 12px; border-radius: 6px; font-size: 10px; margin-top: 1rem; }
+        #qrcode { width: 128px; height: 128px; flex-shrink: 0; margin: 0 auto; }
+        #qrcode img { border: 4px solid var(--amber); border-radius: 8px; background: white; }
+
+        /* NEWS FEED */
+        .feed-section { margin-bottom: 6rem; }
+        #source-feed { max-height: 600px; overflow-y: auto; padding-right: 15px; }
+        #source-feed::-webkit-scrollbar { width: 4px; }
+        #source-feed::-webkit-scrollbar-thumb { background: var(--zinc-800); border-radius: 10px; }
+        .news-card { padding: 25px; border-left: 3px solid var(--zinc-900); background: rgba(9,9,11,0.2); margin-bottom: 1.5rem; border-radius: 0 12px 12px 0; transition: all 0.3s; }
+        .news-card:hover { border-left-color: var(--amber); background: rgba(245,158,11,0.03); }
+        
+        /* UTILS */
         .pulse { animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
-        #copy-toast { visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--amber); color: black; padding: 10px 20px; border-radius: 6px; font-weight: bold; z-index: 9999; font-size: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        #copy-toast { visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--amber); color: black; padding: 12px 24px; border-radius: 8px; font-weight: 900; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         #copy-toast.show { visibility: visible; }
-        #qrcode img { margin: 0 auto; display: block; border: 5px solid var(--amber); border-radius: 8px; background: white; }
-        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div class="system-bar">
-        <div class="bar-content">
-            <div class="disclosure-text">
-                <div style="width: 8px; height: 8px; background: #f59e0b; border-radius: 50%;" class="pulse"></div>
+        <div class="max-w-3xl bar-inner">
+            <div class="disclosure-tag">
+                <div style="width: 8px; height: 8px; background: var(--amber); border-radius: 50%;" class="pulse"></div>
                 System Architecture Disclosure
             </div>
-            <p class="ai-text mono">Designed with the assistance of <span style="font-weight: 900; color: #f59e0b;">Google Gemini AI</span></p>
+            <p class="ai-credit mono">Designed with the assistance of <span style="font-weight: 900; color: var(--amber);">Google Gemini AI</span></p>
         </div>
     </div>
 
-    <div id="copy-toast" class="mono uppercase">Data Copied</div>
+    <div id="copy-toast" class="mono">DATA COPIED</div>
 
     <div class="max-w-3xl">
         <header>
             <div class="status-pill">
-                <span class="mono" style="color: var(--amber); font-weight: bold; font-size: 10px; letter-spacing: 2px;">● STATUS: MONITORING GLOBAL TRANSITION</span>
+                <span class="mono" style="color: var(--amber); font-weight: bold; font-size: 10px; letter-spacing: 0.3em;">● STATUS: MONITORING GLOBAL TRANSITION</span>
             </div>
             <h1>Global Control Index</h1>
             
-            <p class="hero-text">The world is currently undergoing a transition away from independent nations toward a system where <span style="color: var(--amber); font-weight: bold; text-transform: uppercase;">a small group of superstates</span> hold all primary global power.</p>
+            <p class="hero-p">The world is currently undergoing a transition away from independent nations toward a system where <span style="color: var(--amber); font-weight: bold; text-transform: uppercase;">a small group of superstates</span> hold all primary global power.</p>
             <p class="hero-sub">This index tracks the merger of independent territories into these dominant hegemonic blocks. 100% represents the threshold of total unified control, where no nation can maintain military or economic sovereignty without the permission of a superstate core.</p>
             
             <div class="method-box">
-                <div class="method-title mono">Methodology & Development</div>
-                <p class="method-desc">This index is an ongoing monitoring system currently under development. The percentage is calculated using a non-linear scale that weighs kinetic military presence, the capture of regional trade ledgers, and the dissolution of local administrative borders. Because the resistance of remaining sovereign states increases as control tightens, movements above 80% are modeled to be significantly more difficult to achieve, ensuring the data reflects real-world friction rather than linear projection.</p>
+                <div class="method-label mono">Methodology & Development</div>
+                <p class="method-text">This index is an ongoing monitoring system currently under development. The percentage is calculated using a non-linear scale that weighs kinetic military presence, the capture of regional trade ledgers, and the dissolution of local administrative borders. Because the resistance of remaining sovereign states increases as control tightens, movements above 80% are modeled to be significantly more difficult to achieve, ensuring the data reflects real-world friction rather than linear projection.</p>
             </div>
         </header>
 
-        <section class="monitor-box">
-            <div class="percent-row">
-                <span class="mono" style="color: #52525b; text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">Consolidation Status</span>
-                <span id="percent-text" class="percent-val mono">0%</span>
+        <section class="monitor-card">
+            <div class="percent-display">
+                <span class="mono" style="color: var(--zinc-700); text-transform: uppercase; font-size: 11px; letter-spacing: 0.1em;">Consolidation Status</span>
+                <span id="percent-text" class="percent-num mono">0%</span>
             </div>
-            <div class="bar-container">
+            <div class="progress-track">
                 <div id="progress-bar"></div>
             </div>
-            <div style="display: flex; justify-content: space-between; margin-top: 2rem; font-size: 10px;" class="mono uppercase">
-                <span style="color: #3f3f46;">Last Updated: <span id="last-update" style="color: var(--zinc-400);">...</span></span>
-                <span id="api-status" style="color: #451a03; font-weight: bold; letter-spacing: 1px;">Initializing...</span>
+            <div style="display: flex; justify-content: space-between; margin-top: 2rem; font-size: 10px; color: var(--zinc-700);" class="mono uppercase">
+                <span>Last Updated: <span id="last-update" style="color: var(--zinc-400);">...</span></span>
+                <span id="api-status" style="color: #451a03; font-weight: 900;">Feed Initializing</span>
             </div>
         </section>
 
-        <div class="btn-group">
-            <button onclick="copyToClipboard(window.location.href, 'Link')" class="btn btn-amber">Copy Site Link</button>
-            <a id="share-x" target="_blank" class="btn btn-zinc">Share on X</a>
-            <a id="share-fb" target="_blank" class="btn btn-zinc">Facebook</a>
-            <a id="share-wa" target="_blank" class="btn btn-zinc">WhatsApp</a>
-            <a id="share-reddit" target="_blank" class="btn btn-zinc">Reddit</a>
+        <div class="social-grid">
+            <button onclick="copyToClipboard(window.location.href, 'Link')" class="action-btn btn-primary">Copy Site Link</button>
+            <a id="share-x" target="_blank" class="action-btn btn-secondary">Share on X</a>
+            <a id="share-fb" target="_blank" class="action-btn btn-secondary">Facebook</a>
+            <a id="share-wa" target="_blank" class="action-btn btn-secondary">WhatsApp</a>
+            <a id="share-reddit" target="_blank" class="action-btn btn-secondary">Reddit</a>
         </div>
 
-        <div style="background: rgba(9,9,11,0.3); border: 1px solid var(--zinc-900); padding: 2.5rem; border-radius: 1.5rem; display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; justify-content: center; margin-bottom: 4rem;">
-            <div style="flex: 1; min-width: 250px;">
-                <p class="mono" style="color: #3f3f46; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; font-size: 11px;">System Distribution</p>
-                <p style="font-size: 13px; color: #52525b; margin-bottom: 1.5rem;">Scan to distribute this index via physical media or mobile transmission. Generate localized tracking gateway.</p>
-                <input id="embed-code" readonly onclick="copyToClipboard(this.value, 'Embed Code')" style="width: 100%; background: #000; border: 1px solid var(--zinc-900); color: #3f3f46; padding: 12px; border-radius: 6px; box-sizing: border-box; font-size: 10px;" class="mono">
+        <div class="distro-panel">
+            <div style="flex: 1; min-width: 260px;">
+                <p class="mono" style="color: var(--zinc-700); font-weight: bold; text-transform: uppercase; font-size: 11px; margin: 0;">System Distribution</p>
+                <p style="font-size: 13px; color: var(--zinc-700); margin: 10px 0 0 0;">Scan to distribute this index via physical media or mobile transmission.</p>
+                <input id="embed-code" readonly onclick="copyToClipboard(this.value, 'Embed Code')" class="embed-input mono">
             </div>
             <div style="text-align: center;">
                 <div id="qrcode"></div>
-                <p class="mono" style="color: #451a03; font-weight: bold; margin-top: 12px; text-transform: uppercase; font-size: 9px; letter-spacing: 1px;">Live QR Gateway</p>
+                <p class="mono" style="color: #451a03; font-weight: bold; margin-top: 12px; text-transform: uppercase; font-size: 9px;">Live QR Gateway</p>
             </div>
         </div>
 
-        <section class="feed-container">
+        <section class="feed-section">
             <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2.5rem;">
-                <h2 class="mono" style="color: white; margin: 0; font-size: 14px; text-transform: uppercase; font-weight: bold;">Live Crisis Activity Log</h2>
+                <h2 class="mono" style="color: white; margin: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em;">Live Crisis Activity Log</h2>
                 <div style="height: 1px; background: var(--zinc-900); flex-grow: 1;"></div>
             </div>
             <div id="source-feed">
-                <div style="text-align: center; padding: 4rem; color: #27272a;" class="mono pulse uppercase tracking-[0.2em]">Syncing Global Uplink...</div>
+                <div style="text-align: center; padding: 5rem; color: #27272a;" class="mono pulse uppercase">Connecting to global data stream...</div>
             </div>
-            <button id="retry-btn" onclick="fetchNews()" class="hidden" style="width: 100%; margin-top: 1.5rem; border: 1px solid #451a03; background: transparent; color: var(--amber); padding: 15px; cursor: pointer; border-radius: 6px; font-weight: bold;" class="mono uppercase">Force Feed Re-Sync</button>
+            <button id="retry-btn" onclick="fetchNews()" style="display: none; width: 100%; margin-top: 1.5rem; border: 1px solid #451a03; background: transparent; color: var(--amber); padding: 15px; border-radius: 8px; cursor: pointer;" class="mono uppercase font-bold">Force Feed Re-Sync</button>
         </section>
 
-        <footer style="padding-bottom: 4rem; text-align: center; opacity: 0.15;">
-            <p class="mono" style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px;">GCI Independent Awareness Project // 2026</p>
+        <footer style="padding-bottom: 5rem; text-align: center; opacity: 0.2;">
+            <p class="mono" style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em;">GCI Independent Awareness Project // 2026</p>
         </footer>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
         const CONFIG = {
-            indexPercent: 74.2, 
-            updateDate: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-            newsDataKey: "pub_bbb79c103a7f4462b6ef5b204a8e14db"
+            val: 74.2, 
+            date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+            key: "pub_bbb79c103a7f4462b6ef5b204a8e14db"
         };
 
         function fetchNews() {
             const feed = document.getElementById('source-feed');
             const status = document.getElementById('api-status');
             const retry = document.getElementById('retry-btn');
+            status.innerText = "SYNCING...";
             
-            status.innerText = "CONNECTING...";
-            retry.classList.add('hidden');
-
-            // Hard Watchdog: Forces the retry button if the browser silently kills the fetch
-            const watchdog = setTimeout(() => {
-                if(status.innerText === "CONNECTING...") {
-                    status.innerText = "SYNC TIMEOUT";
-                    retry.classList.remove('hidden');
-                    feed.innerHTML = '<div style="text-align: center; padding: 2rem; color: #52525b; font-size: 12px;" class="mono uppercase">Security protocol restricted uplink. Tap Force Re-Sync.</div>';
-                }
-            }, 6000);
-
-            fetch(`https://newsdata.io/api/1/news?apikey=${CONFIG.newsDataKey}&q=superstate%20OR%20geopolitics&language=en`)
+            fetch(`https://newsdata.io/api/1/news?apikey=${CONFIG.key}&q=geopolitics%20OR%20superstate&language=en`)
                 .then(res => res.json())
                 .then(data => {
-                    clearTimeout(watchdog);
                     if(!data.results || data.results.length === 0) throw new Error();
-                    
-                    const articles = data.results.map(a => ({ tag: "SHIFT", title: a.title, desc: a.description || "Secure data restricted.", url: a.link }));
-                    
-                    feed.innerHTML = articles.slice(0, 8).map(item => `
-                        <div class="feed-item">
-                            <span class="tag mono">${item.tag}</span>
-                            <h4 style="color: white; margin: 15px 0 8px 0; font-size: 1.2rem;">${item.title}</h4>
-                            <p style="color: #71717a; font-size: 14px; line-height: 1.6;">${item.desc.substring(0, 160)}...</p>
-                            <a href="${item.url}" target="_blank" class="verify-link mono">Verify Source ↗</a>
+                    feed.innerHTML = data.results.map(a => `
+                        <div class="news-card">
+                            <span class="mono" style="color:var(--amber); font-size:9px; font-weight:bold; background:rgba(245,158,11,0.1); padding:3px 8px; border-radius:4px;">SHIFT</span>
+                            <h4 style="color: white; margin: 15px 0 10px 0; font-size: 1.25rem; line-height: 1.2;">${a.title}</h4>
+                            <p style="color: #71717a; font-size: 14px; line-height: 1.6;">${(a.description || "Intelligence details restricted.").substring(0, 180)}...</p>
+                            <a href="${a.link}" target="_blank" class="mono" style="color: var(--amber); font-size: 11px; text-decoration: none; font-weight:bold; display:inline-block; margin-top:15px; border-bottom:1px solid rgba(245,158,11,0.3);">Verify Source ↗</a>
                         </div>
                     `).join('');
-                    
                     status.innerText = "FEED: LIVE";
+                    retry.style.display = 'none';
                 })
                 .catch(() => {
-                    clearTimeout(watchdog);
-                    status.innerText = "ACCESS BLOCKED";
-                    retry.classList.remove('hidden');
+                    status.innerText = "SYNC BLOCKED";
+                    retry.style.display = 'block';
+                    feed.innerHTML = '<div style="text-align: center; padding: 3rem; color: #52525b;" class="mono uppercase">Uplink failed. Tap Re-Sync below.</div>';
                 });
         }
 
+        let qrDone = false;
+        function makeQR() {
+            if (qrDone || !window.QRCode) return;
+            new QRCode(document.getElementById("qrcode"), { 
+                text: window.location.href, 
+                width: 128, height: 128, 
+                colorDark: "#000", colorLight: "#f59e0b",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            qrDone = true;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            const currentUrl = window.location.href;
-            document.getElementById('last-update').innerText = CONFIG.updateDate;
-            document.getElementById('embed-code').value = `<iframe src="${currentUrl}" width="100%" height="650" style="border:none;"></iframe>`;
+            document.getElementById('last-update').innerText = CONFIG.date;
+            document.getElementById('embed-code').value = `<iframe src="${window.location.href}" width="100%" height="650" style="border:none;"></iframe>`;
             
-            // Animation Trigger
             setTimeout(() => {
-                document.getElementById('progress-bar').style.width = CONFIG.indexPercent + "%";
-                document.getElementById('percent-text').innerText = CONFIG.indexPercent + "%";
+                document.getElementById('progress-bar').style.width = CONFIG.val + "%";
+                document.getElementById('percent-text').innerText = CONFIG.val + "%";
             }, 400);
 
-            // Social Setup
-            const url = encodeURIComponent(currentUrl);
-            const msg = encodeURIComponent("Global Control Index: " + CONFIG.indexPercent + "% Consolidation Detected.");
-            document.getElementById('share-x').href = `https://x.com/intent/tweet?url=${url}&text=${msg}`;
+            const url = encodeURIComponent(window.location.href);
+            const txt = encodeURIComponent("Global Control Index: Monitoring Consolidation");
+            document.getElementById('share-x').href = `https://x.com/intent/tweet?url=${url}&text=${txt}`;
             document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-            document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${msg}%20${url}`;
-            document.getElementById('share-reddit').href = `https://reddit.com/submit?url=${url}&title=${msg}`;
+            document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${txt}%20${url}`;
+            document.getElementById('share-reddit').href = `https://reddit.com/submit?url=${url}&title=${txt}`;
 
-            // QR Recovery
-            const qrInterval = setInterval(() => {
-                if(window.QRCode) {
-                    new QRCode(document.getElementById("qrcode"), { 
-                        text: currentUrl, width: 128, height: 128, 
-                        colorDark: "#000000", colorLight: "#f59e0b", 
-                        correctLevel: QRCode.CorrectLevel.H 
-                    });
-                    clearInterval(qrInterval);
-                }
-            }, 500);
+            const qIter = setInterval(() => {
+                if(window.QRCode) { makeQR(); clearInterval(qIter); }
+            }, 800);
 
             fetchNews();
         });
@@ -234,14 +230,12 @@
             area.value = text;
             document.body.appendChild(area);
             area.select();
-            try {
-                document.execCommand('copy');
-                const toast = document.getElementById("copy-toast");
-                toast.innerText = `${type.toUpperCase()} COPIED`;
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 3000);
-            } catch (err) {}
+            document.execCommand('copy');
             document.body.removeChild(area);
+            const toast = document.getElementById("copy-toast");
+            toast.innerText = `${type.toUpperCase()} COPIED`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
     </script>
 </body>
