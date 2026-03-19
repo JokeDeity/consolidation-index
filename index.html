@@ -4,239 +4,229 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    
-    <title id="dynamic-title">GCI | Global Control Tracker</title>
+    <title>GCI | Global Control Tracker</title>
     
     <meta property="og:type" content="website">
-    <meta id="og-title" property="og:title" content="Global Control Index | Live Monitoring">
-    <meta id="og-desc" property="og:description" content="Tracking the consolidation of global power into superstate cores.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"> 
+    <meta property="og:title" content="Global Control Index | Live Monitoring">
+    <meta property="og:description" content="Tracking the consolidation of global power into superstate cores.">
 
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAn0lEQVR42mP8z8AARCAWAmIuIOYCYiYgZgZiJiBmAmIWIAYpBAmAlIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBIDUgwSA1IMEgNSDBAD0YQeA9Q665QAAAABJRU5ErkJggg==">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #d4d4d8; margin: 0; padding: 0; overflow-x: hidden; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        .progress-glow { box-shadow: 0 0 40px rgba(245, 158, 11, 0.4); position: relative; overflow: hidden; }
-        .progress-glow::after {
-            content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            animation: scan 4s infinite linear;
-        }
-        @keyframes scan { 0% { left: -100%; } 100% { left: 150%; } }
-        .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        :root { --amber: #f59e0b; --zinc-900: #18181b; --zinc-950: #09090b; --zinc-800: #27272a; --zinc-400: #a1a1aa; }
+        body { font-family: 'Inter', sans-serif, system-ui; background-color: #050505; color: #d4d4d8; margin: 0; padding: 0; overflow-x: hidden; line-height: 1.5; }
+        .mono { font-family: 'JetBrains Mono', monospace, 'Courier New'; }
+        .max-w-3xl { max-width: 48rem; margin: 0 auto; padding: 0 1.5rem; }
+        
+        /* TOP BAR */
+        .system-bar { width: 100%; background: rgba(245, 158, 11, 0.1); border-bottom: 1px solid rgba(245, 158, 11, 0.2); padding: 12px 0; margin-bottom: 2rem; }
+        .bar-content { display: flex; justify-content: space-between; align-items: center; }
+        .disclosure-text { color: var(--amber); font-weight: bold; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; display: flex; align-items: center; gap: 8px; }
+        .ai-text { font-size: 9px; color: rgba(245,158,11,0.5); text-transform: uppercase; margin: 0; }
+        
+        /* HEADER */
+        header { text-align: center; margin-bottom: 4rem; border-bottom: 1px solid var(--zinc-900); padding-bottom: 3rem; }
+        .status-pill { border: 1px solid rgba(245,158,11,0.3); background: rgba(245,158,11,0.05); display: inline-block; padding: 4px 12px; border-radius: 4px; margin-bottom: 1.5rem; }
+        h1 { color: white; font-size: clamp(2rem, 8vw, 3rem); font-weight: 800; letter-spacing: -2px; margin: 0 0 1.5rem 0; }
+        .hero-text { font-size: 1.125rem; color: var(--zinc-400); max-width: 40rem; margin: 0 auto 1.5rem auto; text-align: left; }
+        .hero-sub { font-size: 1rem; color: #71717a; text-align: left; }
+        
+        /* METHODOLOGY */
+        .method-box { background: rgba(9,9,11,0.5); padding: 20px; border: 1px solid var(--zinc-900); border-radius: 12px; text-align: left; margin-top: 2rem; }
+        .method-title { font-size: 11px; color: #52525b; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+        .method-desc { font-size: 12px; color: #52525b; font-style: italic; margin: 0; }
+
+        /* MONITOR */
+        .monitor-box { background: rgba(24, 24, 27, 0.2); padding: 2.5rem; border-radius: 1.5rem; border: 1px solid rgba(39, 39, 42, 0.5); margin-bottom: 3rem; }
+        .percent-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; }
+        .percent-val { font-size: clamp(4rem, 15vw, 6rem); font-weight: 900; color: var(--amber); line-height: 1; letter-spacing: -4px; }
+        .bar-container { width: 100%; background: var(--zinc-950); height: 3rem; border-radius: 9999px; padding: 0.5rem; border: 1px solid var(--zinc-900); box-sizing: border-box; }
+        #progress-bar { height: 100%; background: var(--amber); border-radius: 9999px; width: 0%; transition: width 2s ease-out; box-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
+        
+        /* BUTTONS */
+        .btn-group { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 3rem; }
+        .btn { padding: 10px 20px; border-radius: 4px; font-weight: bold; text-transform: uppercase; font-size: 10px; cursor: pointer; text-decoration: none; display: inline-block; border: none; }
+        .btn-amber { background: var(--amber); color: black; }
+        .btn-zinc { background: var(--zinc-900); color: white; border: 1px solid var(--zinc-800); }
+        
+        /* FEED */
+        .feed-container { margin-bottom: 6rem; }
+        .feed-item { padding: 24px; border-left: 2px solid var(--zinc-900); background: rgba(9,9,11,0.2); margin-bottom: 1rem; border-radius: 0 8px 8px 0; }
+        .tag { color: var(--amber); font-weight: bold; background: rgba(245,158,11,0.1); padding: 4px 8px; border-radius: 4px; font-size: 10px; }
+        .verify-link { color: var(--amber); font-size: 11px; text-decoration: none; font-weight: bold; margin-top: 15px; display: inline-block; border-bottom: 1px solid rgba(245,158,11,0.3); }
+
+        /* UI ELEMENTS */
+        .pulse { animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
-        #copy-toast { visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #f59e0b; color: black; padding: 8px 16px; border-radius: 4px; font-weight: bold; z-index: 100; }
+        #copy-toast { visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--amber); color: black; padding: 8px 16px; border-radius: 4px; font-weight: bold; z-index: 1000; font-size: 12px; }
         #copy-toast.show { visibility: visible; }
-        #qrcode img { margin: 0 auto; border: 4px solid #f59e0b; border-radius: 4px; background: white; }
-        #source-feed::-webkit-scrollbar { width: 4px; }
-        #source-feed::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+        #qrcode img { margin: 0 auto; display: block; border: 4px solid var(--amber); border-radius: 4px; background: white; }
     </style>
 </head>
 <body>
 
-    <div class="w-full bg-amber-500/10 border-b border-amber-900/30 py-3 px-6 mb-8">
-        <div class="max-w-3xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-2 h-2 rounded-full bg-amber-500 pulse"></div>
-                <p class="text-[10px] font-bold mono uppercase tracking-[0.2em] text-amber-500">System Architecture Disclosure</p>
+    <div class="system-bar">
+        <div class="max-w-3xl bar-content">
+            <div class="disclosure-text">
+                <div style="width: 8px; height: 8px; background: #f59e0b; border-radius: 50%;" class="pulse"></div>
+                System Architecture Disclosure
             </div>
-            <p class="text-[9px] mono text-amber-200/50 text-right leading-tight uppercase">
-                Designed with the assistance of <span class="text-amber-500 font-black">Google Gemini AI</span>
-            </p>
+            <p class="ai-text mono">Designed with the assistance of <span style="font-weight: 900; color: #f59e0b;">Google Gemini AI</span></p>
         </div>
     </div>
 
-    <div id="copy-toast" class="mono text-[10px] uppercase">Data Copied</div>
+    <div id="copy-toast" class="mono">DATA COPIED</div>
 
-    <div class="max-w-3xl mx-auto px-6">
-        
-        <header class="mb-16 text-center border-b border-zinc-900 pb-12">
-            <div class="inline-block px-3 py-1 border border-amber-900/50 bg-amber-900/10 rounded mb-4">
-                <span class="text-[10px] uppercase tracking-[0.4em] text-amber-500 font-bold mono pulse">● Status: Monitoring Global Transition</span>
+    <div class="max-w-3xl">
+        <header>
+            <div class="status-pill">
+                <span class="mono" style="color: var(--amber); font-weight: bold; font-size: 10px; letter-spacing: 2px;">● STATUS: MONITORING GLOBAL TRANSITION</span>
             </div>
-            <h1 class="text-4xl md:text-5xl font-bold tracking-tighter text-white mb-6">Global Control Index</h1>
+            <h1>Global Control Index</h1>
             
-            <div class="space-y-6 text-zinc-400 text-lg max-w-2xl mx-auto leading-relaxed text-left md:text-center">
-                <p>
-                    The world is currently undergoing a transition away from independent nations toward a system where <span class="text-amber-500 font-semibold uppercase tracking-wide">a small group of superstates</span> hold all primary global power.
-                </p>
-                <p class="text-base text-zinc-500">
-                    This index tracks the merger of independent territories into these dominant hegemonic blocks. 100% represents the threshold of total unified control, where no nation can maintain military or economic sovereignty without the permission of a superstate core.
-                </p>
-                
-                <div class="bg-zinc-950/50 p-5 border border-zinc-900 rounded-xl text-left">
-                    <p class="text-[11px] text-zinc-600 uppercase mb-2 mono tracking-widest font-bold">Methodology & Development</p>
-                    <p class="text-xs text-zinc-500 leading-relaxed italic">
-                        This index is an ongoing monitoring system currently under development. The percentage is calculated using a non-linear scale that weighs kinetic military presence, the capture of regional trade ledgers, and the dissolution of local administrative borders. Because the resistance of remaining sovereign states increases as control tightens, movements above 80% are modeled to be significantly more difficult to achieve, ensuring the data reflects real-world friction rather than linear projection.
-                    </p>
-                </div>
+            <p class="hero-text">The world is currently undergoing a transition away from independent nations toward a system where <span style="color: var(--amber); font-weight: bold; text-transform: uppercase;">a small group of superstates</span> hold all primary global power.</p>
+            <p class="hero-sub">This index tracks the merger of independent territories into these dominant hegemonic blocks. 100% represents the threshold of total unified control, where no nation can maintain military or economic sovereignty without the permission of a superstate core.</p>
+            
+            <div class="method-box">
+                <div class="method-title mono">Methodology & Development</div>
+                <p class="method-desc">This index is an ongoing monitoring system currently under development. The percentage is calculated using a non-linear scale that weighs kinetic military presence, the capture of regional trade ledgers, and the dissolution of local administrative borders. Because the resistance of remaining sovereign states increases as control tightens, movements above 80% are modeled to be significantly more difficult to achieve, ensuring the data reflects real-world friction rather than linear projection.</p>
             </div>
         </header>
 
-        <section class="mb-12 bg-zinc-900/20 p-8 md:p-12 rounded-3xl border border-zinc-800/50 shadow-2xl">
-            <div class="flex justify-between items-end mb-6">
-                <div class="mono uppercase text-[10px] tracking-widest text-zinc-500 italic">Consolidation Status</div>
-                <span id="percent-text" class="text-7xl md:text-8xl font-black text-amber-500 mono tracking-tighter leading-none">0%</span>
+        <section class="monitor-box">
+            <div class="percent-row">
+                <span class="mono" style="color: #52525b; text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">Consolidation Status</span>
+                <span id="percent-text" class="percent-val mono">0%</span>
             </div>
-
-            <div class="w-full bg-zinc-950 h-12 rounded-full p-2 border border-zinc-900">
-                <div id="progress-bar" class="bg-amber-500 h-full rounded-full progress-glow transition-all duration-[2000ms] ease-out" style="width: 0%"></div>
+            <div class="bar-container">
+                <div id="progress-bar"></div>
             </div>
-
-            <div class="mt-8 flex justify-between items-center text-[10px] mono uppercase text-zinc-600 tracking-tighter">
-                <span>Last Updated: <span id="last-update" class="text-zinc-400">Loading...</span></span>
-                <span id="api-status" class="text-amber-900 font-bold uppercase tracking-widest">Feed Initializing</span>
+            <div style="display: flex; justify-content: space-between; margin-top: 2rem; font-size: 10px;" class="mono">
+                <span style="color: #3f3f46;">LAST UPDATED: <span id="last-update" style="color: var(--zinc-400);">...</span></span>
+                <span id="api-status" style="color: #451a03; font-weight: bold; text-transform: uppercase;">Initializing Feed</span>
             </div>
         </section>
 
-        <section class="mb-20 space-y-12">
-            <div class="flex flex-wrap gap-2 justify-center">
-                <button onclick="copyToClipboard(window.location.href, 'Link')" class="px-5 py-2.5 bg-amber-500 text-black rounded text-[10px] font-bold uppercase mono">Copy Site Link</button>
-                <a id="share-x" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono">Share on X</a>
-                <a id="share-fb" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono">Facebook</a>
-                <a id="share-wa" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono">WhatsApp</a>
-                <a id="share-reddit" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono">Reddit</a>
-            </div>
+        <div class="btn-group">
+            <button onclick="copyToClipboard(window.location.href, 'Link')" class="btn btn-amber">Copy Site Link</button>
+            <a id="share-x" target="_blank" class="btn btn-zinc">Share on X</a>
+            <a id="share-fb" target="_blank" class="btn btn-zinc">Facebook</a>
+            <a id="share-wa" target="_blank" class="btn btn-zinc">WhatsApp</a>
+            <a id="share-reddit" target="_blank" class="btn btn-zinc">Reddit</a>
+        </div>
 
-            <div class="grid md:grid-cols-2 gap-8 items-center bg-zinc-950/30 p-8 rounded-2xl border border-zinc-900">
-                <div class="text-center md:text-left space-y-4">
-                    <p class="text-[11px] text-zinc-600 uppercase mono tracking-widest font-bold">System Distribution</p>
-                    <p class="text-xs text-zinc-500 leading-relaxed">Scan to distribute this index via physical media or mobile transmission. Generate localized tracking gateway.</p>
-                    <div class="relative group max-w-sm mx-auto md:mx-0">
-                        <input id="embed-code" readonly onclick="copyToClipboard(this.value, 'Embed Code')" 
-                               class="w-full bg-zinc-900 border border-zinc-800 text-zinc-600 text-[10px] px-4 py-2 rounded mono cursor-pointer">
-                        <span class="absolute right-3 top-2 text-[8px] text-zinc-700 mono">Embed Code</span>
-                    </div>
-                </div>
-                <div class="flex flex-col items-center">
-                    <div id="qrcode"></div>
-                    <p class="mt-4 text-[9px] text-amber-900 mono uppercase font-bold tracking-widest">Live QR Gateway</p>
-                </div>
+        <div style="background: rgba(9,9,11,0.3); border: 1px solid var(--zinc-900); padding: 2rem; border-radius: 1rem; display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; justify-content: center; margin-bottom: 4rem;">
+            <div style="flex: 1; min-width: 250px;">
+                <p class="mono" style="color: #3f3f46; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; font-size: 11px;">System Distribution</p>
+                <p style="font-size: 12px; color: #52525b; margin-bottom: 1rem;">Scan to distribute this index via physical media or mobile transmission. Generate localized tracking gateway.</p>
+                <input id="embed-code" readonly onclick="copyToClipboard(this.value, 'Embed Code')" style="width: 100%; background: #000; border: 1px solid var(--zinc-900); color: #3f3f46; padding: 10px; border-radius: 4px; box-sizing: border-box; font-size: 10px;" class="mono">
             </div>
+            <div style="text-align: center;">
+                <div id="qrcode"></div>
+                <p class="mono" style="color: #451a03; font-weight: bold; margin-top: 10px; text-transform: uppercase; font-size: 9px;">Live QR Gateway</p>
+            </div>
+        </div>
+
+        <section class="feed-container">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                <h2 class="mono" style="color: white; margin: 0; font-size: 14px; text-transform: uppercase;">Live Crisis Activity Log</h2>
+                <div style="height: 1px; background: var(--zinc-900); flex-grow: 1;"></div>
+            </div>
+            <div id="source-feed">
+                <div style="text-align: center; padding: 3rem; color: #27272a;" class="mono pulse">SYNCING GLOBAL UPLINK...</div>
+            </div>
+            <button id="retry-btn" onclick="fetchNews()" style="display: none; width: 100%; margin-top: 1.5rem; border: 1px solid #451a03; background: transparent; color: var(--amber); padding: 12px; cursor: pointer;" class="mono">FORCE FEED RE-SYNC</button>
         </section>
 
-        <section class="mb-24">
-            <div class="flex items-center gap-4 mb-6">
-                <h2 class="text-xs uppercase tracking-[0.3em] text-white font-bold mono">Live Crisis Activity Log</h2>
-                <div class="h-px bg-zinc-800 flex-grow"></div>
-            </div>
-            
-            <div id="source-feed" class="space-y-4 max-h-[650px] overflow-y-auto pr-4">
-                <div class="text-center py-20 mono text-xs text-zinc-700 animate-pulse tracking-widest uppercase">
-                    Syncing global news data...
-                </div>
-            </div>
-            <button id="retry-btn" onclick="fetchNews()" class="hidden w-full mt-4 py-3 border border-amber-900/50 text-amber-600 mono text-[10px] uppercase font-bold hover:bg-amber-900/10 transition-all">Manual Feed Re-Sync Required</button>
-        </section>
-
-        <footer class="pb-12 text-center opacity-20 hover:opacity-100 transition-opacity">
-            <p class="text-[10px] uppercase tracking-[0.3em] text-zinc-800 mono italic">GCI Independent Awareness Project // 2026</p>
+        <footer style="padding-bottom: 3rem; text-align: center; opacity: 0.2;">
+            <p class="mono" style="font-size: 10px; text-transform: uppercase;">GCI Independent Awareness Project // 2026</p>
         </footer>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
         const CONFIG = {
             indexPercent: 74.2, 
             updateDate: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-            newsDataKey: "pub_bbb79c103a7f4462b6ef5b204a8e14db", 
-            gNewsKey: "8403b5973e11d28dbe0b7420a558d4ce"
+            newsDataKey: "pub_bbb79c103a7f4462b6ef5b204a8e14db"
         };
 
-        if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
-            location.replace(`https:${location.href.substring(location.protocol.length)}`);
-        }
-
-        async function fetchNews() {
+        function fetchNews() {
             const feed = document.getElementById('source-feed');
             const status = document.getElementById('api-status');
             const retry = document.getElementById('retry-btn');
             
-            status.innerText = "Syncing...";
-            try {
-                // Timer to prevent Facebook Browser from "hanging" indefinitely
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 6000);
-
-                let response = await fetch(`https://newsdata.io/api/1/news?apikey=${CONFIG.newsDataKey}&q=superstate%20OR%20geopolitics&language=en`, { signal: controller.signal });
-                let data = await response.json();
-                clearTimeout(timeoutId);
-
-                let articles = data.results ? data.results.map(a => ({ tag: "Shift", title: a.title, desc: a.description || "Intelligence details restricted.", url: a.link })) : [];
-
-                if (articles.length === 0) {
-                    response = await fetch(`https://gnews.io/api/v4/search?q=geopolitics&lang=en&apikey=${CONFIG.gNewsKey}`);
-                    data = await response.json();
-                    articles = data.articles ? data.articles.map(a => ({ tag: "Vector", title: a.title, desc: a.description, url: a.url })) : [];
+            status.innerText = "SYNCING...";
+            
+            // Watchdog Timer for Facebook/Firefox
+            const watchdog = setTimeout(() => {
+                status.innerText = "SYNC TIMEOUT";
+                retry.style.display = 'block';
+                if(feed.innerText.includes('UPLINK')) {
+                    feed.innerHTML = '<div style="text-align: center; padding: 2rem; color: #52525b;" class="mono">Network restriction detected. Tap Re-Sync below.</div>';
                 }
+            }, 5500);
 
-                renderFeed(articles);
-                status.innerText = "Feed: Live";
-                retry.classList.add('hidden');
-            } catch (err) {
-                status.innerText = "Sync Blocked";
-                retry.classList.remove('hidden');
-                feed.innerHTML = '<div class="text-center py-10 mono text-[10px] text-zinc-800 uppercase italic">Network policy restricted automated feed uplink. Tap Re-Sync below.</div>';
-            }
+            fetch(`https://newsdata.io/api/1/news?apikey=${CONFIG.newsDataKey}&q=superstate%20OR%20geopolitics&language=en`)
+                .then(res => res.json())
+                .then(data => {
+                    clearTimeout(watchdog);
+                    if(!data.results) throw new Error();
+                    const articles = data.results.map(a => ({ tag: "SHIFT", title: a.title, desc: a.description || "Secure details.", url: a.link }));
+                    renderFeed(articles);
+                    status.innerText = "FEED: LIVE";
+                    retry.style.display = 'none';
+                })
+                .catch(() => {
+                    clearTimeout(watchdog);
+                    status.innerText = "SYNC BLOCKED";
+                    retry.style.display = 'block';
+                });
         }
 
         function renderFeed(articles) {
             const feed = document.getElementById('source-feed');
-            feed.innerHTML = articles.map(item => `
-                <div class="p-6 border-l-2 border-zinc-900 bg-zinc-950/20 hover:border-amber-500 transition-all rounded-r-lg mb-4">
-                    <span class="text-[9px] font-black px-2 py-0.5 bg-amber-900/10 text-amber-500 rounded border border-amber-900/30 mono uppercase tracking-tighter">${item.tag}</span>
-                    <h4 class="text-lg font-semibold text-zinc-100 mt-2 leading-tight">${item.title}</h4>
-                    <p class="text-zinc-500 text-sm mt-3 leading-relaxed">${item.desc.substring(0, 160)}...</p>
-                    <a href="${item.url}" target="_blank" class="text-[10px] text-amber-600 hover:text-amber-400 mono uppercase font-bold tracking-widest border-b border-amber-900/50 mt-4 inline-block pb-0.5">Verify Source ↗</a>
+            feed.innerHTML = articles.slice(0, 8).map(item => `
+                <div class="feed-item">
+                    <span class="tag mono">${item.tag}</span>
+                    <h4 style="color: white; margin: 15px 0 8px 0; font-size: 18px;">${item.title}</h4>
+                    <p style="color: #71717a; font-size: 14px;">${item.desc.substring(0, 150)}...</p>
+                    <a href="${item.url}" target="_blank" class="verify-link mono">Verify Source ↗</a>
                 </div>
             `).join('');
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const currentUrl = window.location.href;
-            const shareTitle = `Global Control Index: ${CONFIG.indexPercent}%`;
-            
-            document.title = shareTitle;
-            document.getElementById('og-title').setAttribute('content', shareTitle);
             document.getElementById('last-update').innerText = CONFIG.updateDate;
-            document.getElementById('embed-code').value = `<iframe src="${currentUrl}" width="100%" height="650" style="border:none; background:#050505;"></iframe>`;
-
+            document.getElementById('embed-code').value = `<iframe src="${window.location.href}" width="100%" height="650" style="border:none;"></iframe>`;
             setTimeout(() => {
                 document.getElementById('progress-bar').style.width = CONFIG.indexPercent + "%";
                 document.getElementById('percent-text').innerText = CONFIG.indexPercent + "%";
-            }, 500);
+            }, 300);
 
-            document.getElementById('share-x').href = `https://x.com/intent/tweet?text=${encodeURIComponent(shareTitle + " | Monitor Live: ")}&url=${encodeURIComponent(currentUrl)}`;
-            document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`;
-            document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareTitle + " " + currentUrl)}`;
-            document.getElementById('share-reddit').href = `https://reddit.com/submit?url=${encodeURIComponent(currentUrl)}&title=${encodeURIComponent(shareTitle)}`;
+            // Socials
+            const url = encodeURIComponent(window.location.href);
+            const msg = encodeURIComponent("GCI Tracking: " + CONFIG.indexPercent + "% Consolidation");
+            document.getElementById('share-x').href = `https://x.com/intent/tweet?url=${url}&text=${msg}`;
+            document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+            document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${msg}%20${url}`;
+            document.getElementById('share-reddit').href = `https://reddit.com/submit?url=${url}&title=${msg}`;
 
-            if (typeof QRCode !== "undefined") {
-                new QRCode(document.getElementById("qrcode"), { 
-                    text: currentUrl, 
-                    width: 120, 
-                    height: 120, 
-                    colorDark: "#050505", 
-                    colorLight: "#f59e0b", 
-                    correctLevel: QRCode.CorrectLevel.H 
-                });
+            if(window.QRCode) {
+                new QRCode(document.getElementById("qrcode"), { text: window.location.href, width: 120, height: 120, colorDark: "#050505", colorLight: "#f59e0b", correctLevel: QRCode.CorrectLevel.H });
             }
-
             fetchNews();
         });
 
         function copyToClipboard(text, type) {
-            navigator.clipboard.writeText(text);
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
             const toast = document.getElementById("copy-toast");
-            toast.innerText = `${type} Copied`;
+            toast.innerText = `${type.toUpperCase()} COPIED`;
             toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
     </script>
 </body>
