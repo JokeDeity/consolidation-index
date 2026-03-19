@@ -3,108 +3,260 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.allorigins.win; base-uri 'self'; form-action 'none'; frame-ancestors 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.gdeltproject.org; base-uri 'self'; form-action 'none'; frame-ancestors 'self'">
   <title>GCI | Global Control Tracker</title>
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="Global Control Index | Live Monitoring">
-  <meta property="og:description" content="Tracking global power concentration with a simple public index and live sources.">
+  <meta property="og:description" content="Tracking global power concentration with a public index and live source feed.">
   <meta property="og:image" content="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop">
 
   <style>
     :root {
-      --amber: #f59e0b; --zinc-950: #09090b; --zinc-900: #18181b; --zinc-800: #27272a;
-      --zinc-700: #3f3f46; --zinc-400: #a1a1aa; --text: #d4d4d8; --ok: #10b981; --err: #dc2626;
+      --amber: #f59e0b;
+      --zinc-950: #09090b;
+      --zinc-900: #18181b;
+      --zinc-800: #27272a;
+      --zinc-700: #3f3f46;
+      --zinc-400: #a1a1aa;
+      --text: #d4d4d8;
+      --ok: #10b981;
+      --err: #dc2626;
     }
+
     * { box-sizing: border-box; }
-    body { margin: 0; background: #050505; color: var(--text); font-family: Inter, -apple-system, Segoe UI, Roboto, sans-serif; }
+
+    body {
+      margin: 0;
+      background: #050505;
+      color: var(--text);
+      font-family: Inter, -apple-system, Segoe UI, Roboto, sans-serif;
+      overflow-x: hidden;
+    }
+
     .mono { font-family: "JetBrains Mono", Consolas, monospace; }
     .max-w-3xl { max-width: 48rem; margin: 0 auto; padding: 0 1.5rem; }
 
     .system-bar {
       width: 100%;
-      background: rgba(245,158,11,.12);
-      border-bottom: 1px solid rgba(245,158,11,.25);
+      background: rgba(245, 158, 11, 0.12);
+      border-bottom: 1px solid rgba(245, 158, 11, 0.25);
       margin-bottom: 1.8rem;
     }
-    .bar-inner {
-      max-width: 48rem; margin: 0 auto; padding: 12px 1.5rem;
-      display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
-    }
-    .disclosure-tag {
-      color: var(--amber); font-weight: 800; text-transform: uppercase; letter-spacing: .16em; font-size: 10px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .pulse { animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
 
-    header { border-bottom: 1px solid var(--zinc-900); padding-bottom: 2rem; margin-bottom: 2.2rem; }
-    h1 {
-      margin: 0 0 1rem 0; line-height: 1.05; color: #fff;
-      font-size: clamp(2.1rem, 8vw, 3.4rem); letter-spacing: -.03em;
+    .bar-inner {
+      max-width: 48rem;
+      margin: 0 auto;
+      padding: 12px 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
-    .hero-p { margin: 0 0 .8rem 0; color: var(--zinc-400); line-height: 1.65; font-size: 1rem; }
+
+    .disclosure-tag {
+      color: var(--amber);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pulse { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+
+    #copy-toast {
+      visibility: hidden;
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      background: var(--amber);
+      color: #000;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-weight: 800;
+      font-size: 12px;
+      z-index: 10000;
+    }
+
+    #copy-toast.show { visibility: visible; }
+
+    header {
+      border-bottom: 1px solid var(--zinc-900);
+      padding-bottom: 2rem;
+      margin-bottom: 2.2rem;
+    }
+
+    h1 {
+      margin: 0 0 1rem 0;
+      line-height: 1.05;
+      color: #fff;
+      font-size: clamp(2.1rem, 8vw, 3.4rem);
+      letter-spacing: -0.03em;
+      font-weight: 800;
+    }
+
+    .hero-p {
+      margin: 0 0 .8rem 0;
+      color: var(--zinc-400);
+      line-height: 1.65;
+      font-size: 1rem;
+    }
 
     .method-box {
-      margin-top: 1.2rem; background: rgba(9,9,11,.45); border: 1px solid var(--zinc-900);
-      border-radius: 12px; padding: 1rem;
+      margin-top: 1.2rem;
+      background: rgba(9, 9, 11, 0.45);
+      border: 1px solid var(--zinc-900);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: left;
     }
-    .method-box ul { margin: .6rem 0 0 1.1rem; padding: 0; color: var(--zinc-400); line-height: 1.6; font-size: 14px; }
+
+    .method-box ul {
+      margin: .6rem 0 0 1.1rem;
+      padding: 0;
+      color: var(--zinc-400);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
     .method-box li { margin: .25rem 0; }
 
     .monitor-card {
-      background: rgba(24,24,27,.2); border: 1px solid rgba(39,39,42,.55);
-      border-radius: 1.3rem; padding: 1.8rem; margin-bottom: 1.8rem;
+      background: rgba(24, 24, 27, 0.2);
+      border: 1px solid rgba(39, 39, 42, 0.55);
+      border-radius: 1.3rem;
+      padding: 1.8rem;
+      margin-bottom: 1.8rem;
     }
+
     .percent-num {
-      font-size: clamp(3.8rem, 13vw, 6rem); font-weight: 900; color: var(--amber);
-      line-height: .9; letter-spacing: -.05em;
+      font-size: clamp(3.8rem, 13vw, 6rem);
+      font-weight: 900;
+      color: var(--amber);
+      line-height: .9;
+      letter-spacing: -0.05em;
     }
+
     .progress-track {
-      width: 100%; height: 2.7rem; border-radius: 2rem; border: 1px solid var(--zinc-900);
-      background: var(--zinc-950); padding: .45rem;
+      width: 100%;
+      height: 2.7rem;
+      border-radius: 2rem;
+      border: 1px solid var(--zinc-900);
+      background: var(--zinc-950);
+      padding: .45rem;
     }
-    #progress-bar { height: 100%; width: 0%; border-radius: 2rem; background: var(--amber); transition: width .8s ease; }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: 2rem;
+      background: var(--amber);
+      transition: width .8s ease;
+    }
+
     .status-row {
-      margin-top: .9rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: .8rem;
-      color: var(--zinc-400); font-size: 12px;
+      margin-top: .9rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: .8rem;
+      color: var(--zinc-400);
+      font-size: 12px;
     }
+
     .ok { color: var(--ok); font-weight: 700; }
     .warn { color: var(--amber); font-weight: 700; }
     .err { color: var(--err); font-weight: 700; }
 
-    .social-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 1.8rem; }
-    .action-btn {
-      padding: 11px 16px; border-radius: 8px; font-weight: 700; text-transform: uppercase; font-size: 11px;
-      border: none; text-decoration: none; cursor: pointer;
+    .social-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 1.8rem;
     }
+
+    .action-btn {
+      padding: 11px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      border: none;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
     .btn-primary { background: var(--amber); color: #000; }
-    .btn-secondary { background: var(--zinc-900); color: #fff; border: 1px solid var(--zinc-800); }
+    .btn-secondary {
+      background: var(--zinc-900);
+      color: #fff;
+      border: 1px solid var(--zinc-800);
+    }
 
     .distro-panel {
-      background: rgba(9,9,11,.4); border: 1px solid var(--zinc-900); border-radius: 1rem;
-      padding: 1.2rem; display: flex; flex-wrap: wrap; align-items: center; gap: 1.2rem; margin-bottom: 2.1rem;
+      background: rgba(9, 9, 11, 0.4);
+      border: 1px solid var(--zinc-900);
+      border-radius: 1rem;
+      padding: 1.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1.2rem;
+      margin-bottom: 2.1rem;
     }
+
     #qr-container {
-      width: 140px; height: 140px; background: #fff; border: 4px solid var(--amber); border-radius: 8px;
-      display: flex; align-items: center; justify-content: center; padding: 10px; margin: 0 auto; flex-shrink: 0;
+      width: 140px;
+      height: 140px;
+      background: #fff;
+      border: 4px solid var(--amber);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      margin: 0 auto;
+      flex-shrink: 0;
     }
+
     #qr-container img { width: 100%; height: 100%; }
 
-    #source-feed { max-height: 560px; overflow-y: auto; padding-right: 8px; }
-    .news-card {
-      background: rgba(9,9,11,.2); border-left: 3px solid var(--zinc-800); border-radius: 0 10px 10px 0;
-      padding: 16px; margin-bottom: 12px;
+    #source-feed {
+      max-height: 560px;
+      overflow-y: auto;
+      padding-right: 8px;
     }
-    .news-title { margin: 10px 0 8px; color: #fff; font-size: 1rem; line-height: 1.35; }
-    .news-desc { margin: 0 0 8px; color: var(--zinc-400); font-size: 14px; line-height: 1.5; }
 
-    #copy-toast {
-      visibility: hidden; position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
-      background: var(--amber); color: #000; border-radius: 8px; padding: 10px 14px; font-weight: 800; font-size: 12px;
-      z-index: 10000;
+    .news-card {
+      background: rgba(9, 9, 11, 0.2);
+      border-left: 3px solid var(--zinc-800);
+      border-radius: 0 10px 10px 0;
+      padding: 16px;
+      margin-bottom: 12px;
     }
-    #copy-toast.show { visibility: visible; }
+
+    .news-title {
+      margin: 10px 0 8px;
+      color: #fff;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .news-desc {
+      margin: 0 0 8px;
+      color: var(--zinc-400);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .subtle { color: var(--zinc-400); }
   </style>
 </head>
 <body>
@@ -125,9 +277,13 @@
   <div class="max-w-3xl">
     <header>
       <div style="display:inline-block;border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.05);padding:6px 12px;border-radius:6px;margin-bottom:1rem;">
-        <span class="mono" style="color:var(--amber);font-size:11px;letter-spacing:.12em;font-weight:700;">● STATUS: MONITORING GLOBAL POWER CONSOLIDATION</span>
+        <span class="mono" style="color:var(--amber);font-size:11px;letter-spacing:.12em;font-weight:700;">
+          ● STATUS: MONITORING GLOBAL POWER CONSOLIDATION
+        </span>
       </div>
+
       <h1>Global Control Index</h1>
+
       <p class="hero-p">
         This index estimates how far the world has shifted from many independent decision-making states toward fewer dominant power blocs.
       </p>
@@ -148,16 +304,18 @@
 
     <section class="monitor-card">
       <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
-        <span class="mono" style="font-size:12px;color:var(--zinc-400);text-transform:uppercase;">Consolidation Status</span>
+        <span class="mono subtle" style="font-size:12px;text-transform:uppercase;">Consolidation Status</span>
         <span id="percent-text" class="percent-num mono">--.-%</span>
       </div>
+
       <div class="progress-track"><div id="progress-bar"></div></div>
+
       <div class="status-row mono">
         <span>Last Updated: <span id="last-update">loading...</span></span>
         <span>Auto Refresh: every 15 min</span>
         <span id="api-status" class="warn">Initializing</span>
       </div>
-      <p id="confidence-text" class="mono" style="font-size:12px;color:var(--zinc-400);margin:.55rem 0 0;">Confidence: --</p>
+      <p id="confidence-text" class="mono subtle" style="font-size:12px;margin:.55rem 0 0;">Confidence: --</p>
     </section>
 
     <div class="social-grid">
@@ -170,7 +328,7 @@
 
     <div class="distro-panel">
       <div style="flex:1;min-width:250px;">
-        <p class="mono" style="margin:0;color:var(--zinc-400);font-size:12px;font-weight:700;text-transform:uppercase;">System Distribution</p>
+        <p class="mono subtle" style="margin:0;font-size:12px;font-weight:700;text-transform:uppercase;">System Distribution</p>
         <input id="embed-code" readonly class="mono" style="width:100%;margin-top:.75rem;background:#000;border:1px solid var(--zinc-900);color:var(--zinc-400);padding:12px;border-radius:6px;font-size:11px;">
       </div>
       <div id="qr-container"><img id="qr-image" src="" alt="QR code for this site"></div>
@@ -194,14 +352,6 @@
       refreshMs: 15 * 60 * 1000,
       maxFeedItems: 30
     };
-
-    const TOPIC_QUERIES = [
-      '"great power competition" geopolitics',
-      'annexation sanctions military alliance',
-      '"sphere of influence" foreign policy',
-      '"regime change" international relations',
-      '"strategic corridor" security pact'
-    ];
 
     const dom = {
       percent: document.getElementById("percent-text"),
@@ -232,7 +382,7 @@
         : d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
     }
 
-    function short(s, max) {
+    function shortText(s, max) {
       const t = String(s || "").trim();
       if (!t) return "No description provided.";
       return t.length > max ? t.slice(0, max - 1).trimEnd() + "..." : t;
@@ -282,16 +432,17 @@
       dom.confidence.textContent = "Confidence: " + (data && data.confidence ? data.confidence : "not provided");
     }
 
-    function tagEl(text) {
+    function makeTag(text) {
       const t = document.createElement("span");
       t.className = "mono";
       t.style.cssText = "color:var(--amber);font-size:10px;font-weight:700;background:rgba(245,158,11,.1);padding:3px 8px;border-radius:4px;";
-      t.textContent = text || "SHIFT";
+      t.textContent = text || "LIVE";
       return t;
     }
 
     function renderFeed(items) {
       dom.feed.innerHTML = "";
+
       if (!Array.isArray(items) || !items.length) {
         const empty = document.createElement("div");
         empty.className = "mono";
@@ -302,105 +453,40 @@
       }
 
       items.slice(0, CONFIG.maxFeedItems).forEach((item) => {
-        const wrap = document.createElement("article");
-        wrap.className = "news-card";
-        wrap.appendChild(tagEl(item.category || "LIVE"));
+        const card = document.createElement("article");
+        card.className = "news-card";
+        card.appendChild(makeTag(item.category || "LIVE"));
 
-        const h = document.createElement("h3");
-        h.className = "news-title";
-        h.textContent = short(item.title, 160);
-        wrap.appendChild(h);
+        const title = document.createElement("h3");
+        title.className = "news-title";
+        title.textContent = shortText(item.title, 160);
+        card.appendChild(title);
 
-        const p = document.createElement("p");
-        p.className = "news-desc";
-        p.textContent = short(item.summary || "", 220);
-        wrap.appendChild(p);
+        const desc = document.createElement("p");
+        desc.className = "news-desc";
+        desc.textContent = shortText(item.summary || "", 220);
+        card.appendChild(desc);
 
-        const m = document.createElement("p");
-        m.className = "mono";
-        m.style.cssText = "margin:0 0 10px;font-size:11px;color:#71717a;";
-        m.textContent = (item.source_name || "Source") + " · " + fmtDate(item.published_at);
-        wrap.appendChild(m);
+        const meta = document.createElement("p");
+        meta.className = "mono";
+        meta.style.cssText = "margin:0 0 10px;font-size:11px;color:#71717a;";
+        meta.textContent = (item.source_name || "Source") + " · " + fmtDate(item.published_at);
+        card.appendChild(meta);
 
-        const url = safeHttpUrl(item.url);
-        if (url) {
+        const link = safeHttpUrl(item.url);
+        if (link) {
           const a = document.createElement("a");
-          a.href = url;
+          a.href = link;
           a.target = "_blank";
           a.rel = "noopener noreferrer";
           a.className = "mono";
           a.style.cssText = "color:var(--amber);font-size:12px;text-decoration:none;font-weight:700;";
           a.textContent = "Verify Source ↗";
-          wrap.appendChild(a);
+          card.appendChild(a);
         }
 
-        dom.feed.appendChild(wrap);
+        dom.feed.appendChild(card);
       });
-    }
-
-    function parseRssItems(xmlText) {
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(xmlText, "text/xml");
-      const nodes = Array.from(xml.querySelectorAll("item"));
-      return nodes.map((n) => {
-        const title = n.querySelector("title")?.textContent?.trim() || "Untitled";
-        const link = n.querySelector("link")?.textContent?.trim() || "";
-        const pubDate = n.querySelector("pubDate")?.textContent?.trim() || "";
-        const source = n.querySelector("source")?.textContent?.trim() || "Google News";
-        const descRaw = n.querySelector("description")?.textContent || "";
-        const description = descRaw.replace(/<[^>]*>/g, "").trim();
-
-        return {
-          title: title,
-          summary: description,
-          url: link,
-          source_name: source,
-          published_at: pubDate,
-          category: "LIVE"
-        };
-      });
-    }
-
-    async function fetchGoogleNewsQuery(query) {
-      const rssUrl = "https://news.google.com/rss/search?q=" +
-        encodeURIComponent(query + " when:7d") + "&hl=en-US&gl=US&ceid=US:en";
-      const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(rssUrl);
-
-      const res = await fetch(proxyUrl, { cache: "no-store" });
-      if (!res.ok) throw new Error("rss fetch failed");
-      const text = await res.text();
-      return parseRssItems(text);
-    }
-
-    async function fetchLiveFeed() {
-      const batches = await Promise.allSettled(TOPIC_QUERIES.map(fetchGoogleNewsQuery));
-      const merged = batches
-        .filter((r) => r.status === "fulfilled")
-        .flatMap((r) => r.value);
-
-      const seen = new Set();
-      const unique = merged.filter((item) => {
-        const key = (item.url || item.title).toLowerCase();
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
-
-      unique.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
-      return unique.slice(0, CONFIG.maxFeedItems);
-    }
-
-    async function fetchFallbackFeed() {
-      const res = await fetch(CONFIG.fallbackFeedUrl, { cache: "no-store" });
-      if (!res.ok) return [];
-      const data = await res.json();
-      return Array.isArray(data.items) ? data.items : [];
-    }
-
-    async function fetchScore() {
-      const res = await fetch(CONFIG.scoreUrl, { cache: "no-store" });
-      if (!res.ok) throw new Error("score fetch failed");
-      return res.json();
     }
 
     function saveCache(key, value) {
@@ -414,6 +500,59 @@
       } catch (_) {
         return null;
       }
+    }
+
+    async function fetchWithTimeout(url, ms = 7000) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), ms);
+      try {
+        return await fetch(url, { cache: "no-store", signal: controller.signal });
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    async function fetchScore() {
+      const res = await fetchWithTimeout(CONFIG.scoreUrl, 3500);
+      if (!res.ok) throw new Error("score fetch failed");
+      return res.json();
+    }
+
+    async function fetchLiveFeed() {
+      const query = encodeURIComponent('(geopolitics OR "power bloc" OR annexation OR sanctions OR "sphere of influence") lang:english');
+      const url = "https://api.gdeltproject.org/api/v2/doc/doc?query=" + query + "&mode=ArtList&maxrecords=40&format=json&sort=DateDesc";
+
+      const res = await fetchWithTimeout(url, 7000);
+      if (!res.ok) throw new Error("live feed failed");
+
+      const data = await res.json();
+      const articles = Array.isArray(data.articles) ? data.articles : [];
+
+      const mapped = articles.map((a) => ({
+        title: a.title || "Untitled",
+        summary: "Detected in live global media stream.",
+        url: a.url || "",
+        source_name: a.domain || "Live source",
+        published_at: a.seendate || "",
+        category: "LIVE"
+      }));
+
+      const seen = new Set();
+      const unique = mapped.filter((item) => {
+        const key = (item.url || item.title).toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+
+      return unique.slice(0, CONFIG.maxFeedItems);
+    }
+
+    async function fetchFallbackFeed() {
+      const res = await fetchWithTimeout(CONFIG.fallbackFeedUrl, 2500);
+      if (!res.ok) return [];
+      const data = await res.json();
+      return Array.isArray(data.items) ? data.items : [];
     }
 
     async function refreshAll() {
@@ -431,43 +570,43 @@
 
       try {
         const liveItems = await fetchLiveFeed();
-        if (!liveItems.length) throw new Error("empty live feed");
+        if (!liveItems.length) throw new Error("empty feed");
         renderFeed(liveItems);
         saveCache("gci_feed", liveItems);
         setStatus("Feed: LIVE", "ok");
-      } catch (_) {
-        try {
-          const fallback = await fetchFallbackFeed();
-          if (fallback.length) {
-            renderFeed(fallback);
-            saveCache("gci_feed", fallback);
-            setStatus("Feed: FALLBACK", "warn");
-          } else {
-            throw new Error("no fallback");
-          }
-        } catch (_) {
-          const cached = loadCache("gci_feed");
-          if (cached && cached.length) {
-            renderFeed(cached);
-            setStatus("Feed: CACHED", "warn");
-          } else {
-            renderFeed([]);
-            setStatus("Sync blocked", "err");
-            dom.retry.style.display = "block";
-          }
+        return;
+      } catch (_) {}
+
+      try {
+        const fallback = await fetchFallbackFeed();
+        if (fallback.length) {
+          renderFeed(fallback);
+          saveCache("gci_feed", fallback);
+          setStatus("Feed: FALLBACK", "warn");
+          return;
         }
+      } catch (_) {}
+
+      const cached = loadCache("gci_feed");
+      if (cached && cached.length) {
+        renderFeed(cached);
+        setStatus("Feed: CACHED", "warn");
+      } else {
+        renderFeed([]);
+        setStatus("Sync blocked", "err");
+        dom.retry.style.display = "block";
       }
     }
 
     function setupShareAndEmbed() {
       const currentUrl = window.location.href;
       const encoded = encodeURIComponent(currentUrl);
-      const text = encodeURIComponent("Global Control Index");
+      const shareText = encodeURIComponent("Global Control Index");
 
-      document.getElementById("share-x").href = "https://x.com/intent/tweet?url=" + encoded + "&text=" + text;
+      document.getElementById("share-x").href = "https://x.com/intent/tweet?url=" + encoded + "&text=" + shareText;
       document.getElementById("share-fb").href = "https://www.facebook.com/sharer/sharer.php?u=" + encoded;
-      document.getElementById("share-wa").href = "https://api.whatsapp.com/send?text=" + text + "%20" + encoded;
-      document.getElementById("share-reddit").href = "https://reddit.com/submit?url=" + encoded + "&title=" + text;
+      document.getElementById("share-wa").href = "https://api.whatsapp.com/send?text=" + shareText + "%20" + encoded;
+      document.getElementById("share-reddit").href = "https://reddit.com/submit?url=" + encoded + "&title=" + shareText;
 
       dom.embed.value = '<iframe src="' + currentUrl + '" width="100%" height="700" loading="lazy" referrerpolicy="no-referrer"></iframe>';
       dom.qr.src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + encoded;
