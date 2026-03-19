@@ -18,37 +18,29 @@
         body { font-family: 'Inter', -apple-system, sans-serif; background-color: #050505; color: #d4d4d8; margin: 0; padding: 0; overflow-x: hidden; }
         .mono { font-family: 'JetBrains Mono', monospace; }
         .max-w-3xl { max-width: 48rem; margin: 0 auto; padding: 0 1.5rem; }
-
         .system-bar { width: 100%; background: rgba(245, 158, 11, 0.1); border-bottom: 1px solid rgba(245, 158, 11, 0.2); margin-bottom: 2rem; }
         .bar-inner { display: flex; justify-content: space-between; align-items: center; max-width: 48rem; margin: 0 auto; padding: 12px 1.5rem; gap: 1rem; flex-wrap: wrap; }
         .disclosure-tag { color: var(--amber); font-weight: bold; text-transform: uppercase; letter-spacing: 0.2em; font-size: 10px; display: flex; align-items: center; gap: 8px; }
-
         header { text-align: center; margin-bottom: 4rem; border-bottom: 1px solid var(--zinc-900); padding-bottom: 3rem; }
         h1 { color: white; font-size: clamp(2.2rem, 8vw, 3.5rem); font-weight: 800; letter-spacing: -0.05em; margin: 0 0 1.5rem 0; line-height: 1; }
         .hero-p { font-size: 1.125rem; color: var(--zinc-400); text-align: left; line-height: 1.6; margin-bottom: 1.5rem; }
         .method-box { background: rgba(9,9,11,0.5); padding: 24px; border: 1px solid var(--zinc-900); border-radius: 12px; text-align: left; margin-top: 2.5rem; }
         .method-text { font-size: 12px; color: var(--zinc-700); font-style: italic; margin: 0; line-height: 1.7; }
-
         .monitor-card { background: rgba(24, 24, 27, 0.2); padding: 3rem; border-radius: 2rem; border: 1px solid rgba(39, 39, 42, 0.5); margin-bottom: 3rem; }
         .percent-num { font-size: clamp(4.5rem, 15vw, 6.5rem); font-weight: 900; color: var(--amber); line-height: 0.9; letter-spacing: -0.05em; }
         .progress-track { width: 100%; background: var(--zinc-950); height: 3.5rem; border-radius: 2rem; padding: 0.6rem; border: 1px solid var(--zinc-900); }
         #progress-bar { height: 100%; background: var(--amber); border-radius: 2rem; width: 0%; transition: width 2s cubic-bezier(0.16, 1, 0.3, 1); }
-
         .social-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 3.5rem; }
         .action-btn { padding: 12px 20px; border-radius: 6px; font-weight: bold; text-transform: uppercase; font-size: 10px; cursor: pointer; text-decoration: none; border: none; }
         .btn-primary { background: var(--amber); color: black; }
         .btn-secondary { background: var(--zinc-900); color: white; border: 1px solid var(--zinc-800); }
-
         .distro-panel { background: rgba(9,9,11,0.4); border: 1px solid var(--zinc-900); padding: 2.5rem; border-radius: 1.5rem; display: flex; flex-wrap: wrap; gap: 2.5rem; align-items: center; margin-bottom: 5rem; }
         #qr-container { width: 140px; height: 140px; background: white; padding: 10px; border-radius: 8px; border: 4px solid var(--amber); display: flex; align-items: center; justify-content: center; margin: 0 auto; flex-shrink: 0; }
         #qr-container img { width: 100%; height: 100%; }
-
         #source-feed { max-height: 600px; overflow-y: auto; padding-right: 15px; }
         .news-card { padding: 25px; border-left: 3px solid var(--zinc-900); background: rgba(9,9,11,0.2); margin-bottom: 1.5rem; border-radius: 0 12px 12px 0; }
-
         .pulse { animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
-
         #copy-toast { visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--amber); color: black; padding: 12px 24px; border-radius: 8px; font-weight: 900; z-index: 10000; }
         #copy-toast.show { visibility: visible; }
     </style>
@@ -62,7 +54,7 @@
                 System Architecture Disclosure
             </div>
             <p class="mono" style="font-size: 9px; color: rgba(245,158,11,0.5); margin: 0; text-transform: uppercase;">
-                Designed with the assistance of <span style="font-weight: 900; color: var(--amber);">Google Gemini AI</span>
+                Designed with the assistance of <span style="font-weight: 900; color: var(--amber);">Google Gemini + Cursor AI</span>
             </p>
         </div>
     </div>
@@ -80,7 +72,7 @@
 
             <div class="method-box">
                 <div class="mono" style="font-size: 11px; color: var(--zinc-700); font-weight: bold; text-transform: uppercase; margin-bottom: 10px;">Methodology & Development</div>
-                <p class="method-text">This index is an ongoing monitoring system currently under development. The percentage is calculated using a non-linear scale that weighs kinetic military presence, the capture of regional trade ledgers, and the dissolution of local administrative borders. Because the resistance of remaining sovereign states increases as control tightens, movements above 80% are modeled to be significantly more difficult to achieve, ensuring the data reflects real-world friction rather than linear projection.</p>
+                <p class="method-text">This index is an ongoing monitoring system currently under development. The percentage is algorithmically generated from structural world-state indicators and event pressure from topic-filtered global news. The scale applies non-linear top-end friction so progress above 80% is harder to achieve.</p>
             </div>
         </header>
 
@@ -121,15 +113,12 @@
             <div id="source-feed">
                 <div style="text-align: center; padding: 5rem; color: #27272a;" class="mono pulse uppercase">Connecting to global data stream...</div>
             </div>
-            <button id="retry-btn" onclick="fetchNews()" style="display: none; width: 100%; margin-top: 1.5rem; border: 1px solid #451a03; background: transparent; color: var(--amber); padding: 15px; border-radius: 8px;" class="mono uppercase font-bold">Force Feed Re-Sync</button>
+            <button id="retry-btn" onclick="refreshAll()" style="display: none; width: 100%; margin-top: 1.5rem; border: 1px solid #451a03; background: transparent; color: var(--amber); padding: 15px; border-radius: 8px;" class="mono uppercase font-bold">Force Feed Re-Sync</button>
         </section>
     </div>
 
     <script>
         const CONFIG = {
-            fallbackVal: 74.2,
-            fallbackDate: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-            key: "pub_bbb79c103a7f4462b6ef5b204a8e14db",
             refreshMs: 15 * 60 * 1000
         };
 
@@ -149,7 +138,6 @@
             }
         }
 
-        // Compatibility-safe escaping (no replaceAll)
         function escapeHtml(str) {
             return String(str || "")
                 .replace(/&/g, "&amp;")
@@ -160,30 +148,15 @@
         }
 
         async function loadScore() {
-            try {
-                const res = await fetch("./data/latest.json", { cache: "no-store" });
-                if (!res.ok) throw new Error("latest.json missing");
-                const data = await res.json();
-
-                const score = clampPercent(data.score);
-                const when = data.updated_at
-                    ? new Date(data.updated_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-                    : CONFIG.fallbackDate;
-
-                return {
-                    score,
-                    when,
-                    model: data.model || "gci-algorithm-v1",
-                    confidence: data.confidence || "medium"
-                };
-            } catch {
-                return {
-                    score: clampPercent(CONFIG.fallbackVal),
-                    when: CONFIG.fallbackDate,
-                    model: "fallback-static",
-                    confidence: "low"
-                };
-            }
+            const res = await fetch("./data/latest.json", { cache: "no-store" });
+            if (!res.ok) throw new Error("latest.json missing");
+            const data = await res.json();
+            return {
+                score: clampPercent(data.score),
+                when: data.updated_at ? new Date(data.updated_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : "...",
+                model: data.model || "gci-algorithm-v1",
+                confidence: data.confidence || "unknown"
+            };
         }
 
         function renderScore(scoreData) {
@@ -193,45 +166,31 @@
             setTimeout(() => {
                 document.getElementById('progress-bar').style.width = scoreData.score + "%";
                 document.getElementById('percent-text').innerText = scoreData.score.toFixed(1) + "%";
-            }, 400);
+            }, 300);
         }
 
-        async function fetchNewsFromDataFile() {
-            try {
-                const res = await fetch("./data/feed.json", { cache: "no-store" });
-                if (!res.ok) return [];
-                const data = await res.json();
-                return Array.isArray(data.items) ? data.items : [];
-            } catch {
-                return [];
-            }
-        }
-
-        async function fetchNewsFromApi() {
-            const res = await fetch(`https://newsdata.io/api/1/news?apikey=${CONFIG.key}&q=geopolitics%20OR%20superstate&language=en`);
+        async function loadFeedFromData() {
+            const res = await fetch("./data/feed.json", { cache: "no-store" });
+            if (!res.ok) throw new Error("feed.json missing");
             const data = await res.json();
-            if (!data.results || data.results.length === 0) throw new Error("no results");
-            return data.results.map(a => ({
-                title: a.title,
-                summary: a.description || "Data restricted.",
-                url: a.link || a.source_url || "#",
-                source_name: a.source_id || "Live Source",
-                published_at: a.pubDate || "",
-                category: "SHIFT"
-            }));
+            return Array.isArray(data.items) ? data.items : [];
         }
 
         function renderFeed(items) {
             const feed = document.getElementById('source-feed');
-            feed.innerHTML = items.map(a => {
+            if (!items.length) {
+                feed.innerHTML = `<div style="text-align:center; padding:3rem; color:#3f3f46;" class="mono">No topical items yet. Run the data updater workflow to populate this feed.</div>`;
+                return;
+            }
+            feed.innerHTML = items.map((a) => {
                 const articleLink = safeUrl(a.url || "#");
                 const title = escapeHtml(a.title || "Untitled");
-                const summary = escapeHtml((a.summary || "Data restricted.").substring(0, 160));
+                const summary = escapeHtml((a.summary || "No summary.").substring(0, 180));
+                const category = escapeHtml(a.category || "SHIFT");
                 const meta = escapeHtml(`${a.source_name || "Source"} ${a.published_at ? "· " + a.published_at : ""}`);
-
                 return `
                     <div class="news-card">
-                        <span class="mono" style="color:var(--amber); font-size:9px; font-weight:bold; background:rgba(245,158,11,0.1); padding:3px 8px; border-radius:4px;">${escapeHtml(a.category || "SHIFT")}</span>
+                        <span class="mono" style="color:var(--amber); font-size:9px; font-weight:bold; background:rgba(245,158,11,0.1); padding:3px 8px; border-radius:4px;">${category}</span>
                         <h4 style="color: white; margin: 15px 0 10px 0; font-size: 1.2rem;">${title}</h4>
                         <p style="color: #71717a; font-size: 14px;">${summary}...</p>
                         <p class="mono" style="color:#3f3f46; font-size:10px; margin:0 0 8px 0;">${meta}</p>
@@ -241,49 +200,36 @@
             }).join('');
         }
 
-        async function fetchNews() {
+        async function refreshAll() {
             const status = document.getElementById('api-status');
             const retry = document.getElementById('retry-btn');
             status.innerText = "SYNCING...";
-
             try {
-                let items = await fetchNewsFromDataFile();
-                if (!items.length) {
-                    items = await fetchNewsFromApi();
-                }
-
-                if (!items.length) throw new Error("no items");
-                renderFeed(items);
+                const [scoreData, feedItems] = await Promise.all([loadScore(), loadFeedFromData()]);
+                renderScore(scoreData);
+                renderFeed(feedItems);
                 status.innerText = "FEED: LIVE";
                 retry.style.display = 'none';
-            } catch {
+            } catch (e) {
                 status.innerText = "SYNC BLOCKED";
                 retry.style.display = 'block';
+                console.error("Refresh failed:", e);
             }
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const currentUrl = window.location.href;
-                document.getElementById('embed-code').value = `<iframe src="${currentUrl}" width="100%" height="650"></iframe>`;
-                document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentUrl)}`;
+            const currentUrl = window.location.href;
+            document.getElementById('embed-code').value = `<iframe src="${currentUrl}" width="100%" height="650"></iframe>`;
+            document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentUrl)}`;
 
-                const scoreData = await loadScore();
-                renderScore(scoreData);
+            const url = encodeURIComponent(currentUrl);
+            document.getElementById('share-x').href = `https://x.com/intent/tweet?url=${url}`;
+            document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+            document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${url}`;
+            document.getElementById('share-reddit').href = `https://reddit.com/submit?url=${url}`;
 
-                const url = encodeURIComponent(currentUrl);
-                document.getElementById('share-x').href = `https://x.com/intent/tweet?url=${url}`;
-                document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-                document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${url}`;
-                document.getElementById('share-reddit').href = `https://reddit.com/submit?url=${url}`;
-
-                fetchNews();
-                setInterval(fetchNews, CONFIG.refreshMs);
-                setInterval(async () => renderScore(await loadScore()), CONFIG.refreshMs);
-            } catch (e) {
-                document.getElementById('api-status').innerText = "INIT ERROR";
-                console.error("Startup error:", e);
-            }
+            await refreshAll();
+            setInterval(refreshAll, CONFIG.refreshMs);
         });
 
         async function copyToClipboard(text, type) {
@@ -298,7 +244,6 @@
                     document.execCommand('copy');
                     document.body.removeChild(area);
                 }
-
                 const toast = document.getElementById("copy-toast");
                 toast.innerText = `${type.toUpperCase()} COPIED`;
                 toast.classList.add('show');
