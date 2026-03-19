@@ -25,6 +25,11 @@ const STRUCTURAL_WEIGHTS = {
 
 const EVENT_BUCKETS = {
   blocAlignment: [
+    "great power competition",
+    "power bloc",
+    "sphere of influence",
+    "geopolitics",
+    "regional hegemony",
     "military alliance",
     "security pact",
     "strategic partnership",
@@ -32,6 +37,9 @@ const EVENT_BUCKETS = {
     "joint military exercise"
   ],
   coercivePressure: [
+    "export controls",
+    "economic coercion",
+    "currency weaponization",
     "sanctions",
     "secondary sanctions",
     "embargo",
@@ -39,6 +47,9 @@ const EVENT_BUCKETS = {
     "asset freeze"
   ],
   territorialPressure: [
+    "proxy war",
+    "buffer zone",
+    "territorial claim",
     "annex",
     "occupation",
     "incursion",
@@ -46,6 +57,8 @@ const EVENT_BUCKETS = {
     "separatist region"
   ],
   regimePressure: [
+    "state of emergency",
+    "authoritarian consolidation",
     "coup",
     "regime change",
     "government collapse",
