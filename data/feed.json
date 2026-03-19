@@ -1,0 +1,12 @@
+{
+  "items": [
+    {
+      "title": "Example source headline",
+      "summary": "Short summary of why this matters to your index.",
+      "url": "https://example.com/article",
+      "source_name": "Example Outlet",
+      "published_at": "2026-03-19T10:30:00Z",
+      "category": "Policy"
+    }
+  ]
+}
