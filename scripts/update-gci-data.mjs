@@ -111,14 +111,25 @@ function toFeedItems(articles) {
     return { ...a, relevance, category };
   });
 
-  return scored
+  const topical = scored
     .filter((a) => a.relevance > 0)
     .sort((a, b) => {
       if (b.relevance !== a.relevance) return b.relevance - a.relevance;
       return new Date(b.pubDate) - new Date(a.pubDate);
-    })
+    });
+
+  // If classifier misses exact terms, keep recent query-matched items so feed is never empty.
+  const fallbackRecent = scored
+    .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
     .slice(0, 30)
     .map((a) => ({
+      ...a,
+      category: a.category || "SHIFT"
+    }));
+
+  const selected = topical.length ? topical.slice(0, 30) : fallbackRecent;
+
+  return selected.map((a) => ({
       title: a.title,
       summary: a.description || "Detected in global media stream.",
       url: a.link,
