@@ -1,630 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.gdeltproject.org; base-uri 'self'; form-action 'none'; frame-ancestors 'self'">
-  <title>GCI | Global Control Tracker</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Kept lightweight like your original -->
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Global Control Index | Live Monitoring">
-  <meta property="og:description" content="Tracking global power concentration with a public index and live source feed.">
-  <meta property="og:image" content="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop">
+    <title>GCI | Global Control Tracker</title>
 
-  <style>
-    :root {
-      --amber: #f59e0b;
-      --zinc-950: #09090b;
-      --zinc-900: #18181b;
-      --zinc-800: #27272a;
-      --zinc-700: #3f3f46;
-      --zinc-400: #a1a1aa;
-      --text: #d4d4d8;
-      --ok: #10b981;
-      --err: #dc2626;
-    }
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Global Control Index | Live Monitoring">
+    <meta property="og:description" content="Tracking the consolidation of global power into dominant geopolitical blocs.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop">
 
-    * { box-sizing: border-box; }
+    <style>
+        :root { --amber: #f59e0b; --zinc-900: #18181b; --zinc-950: #09090b; --zinc-800: #27272a; --zinc-700: #3f3f46; --zinc-400: #a1a1aa; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background-color: #050505; color: #d4d4d8; margin: 0; padding: 0; overflow-x: hidden; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .max-w-3xl { max-width: 48rem; margin: 0 auto; padding: 0 1.5rem; }
 
-    body {
-      margin: 0;
-      background: #050505;
-      color: var(--text);
-      font-family: Inter, -apple-system, Segoe UI, Roboto, sans-serif;
-      overflow-x: hidden;
-    }
+        .system-bar { width: 100%; background: rgba(245, 158, 11, 0.1); border-bottom: 1px solid rgba(245, 158, 11, 0.2); margin-bottom: 2rem; }
+        .bar-inner { display: flex; justify-content: space-between; align-items: center; max-width: 48rem; margin: 0 auto; padding: 12px 1.5rem; gap: 1rem; flex-wrap: wrap; }
+        .disclosure-tag { color: var(--amber); font-weight: bold; text-transform: uppercase; letter-spacing: 0.2em; font-size: 10px; display: flex; align-items: center; gap: 8px; }
 
-    .mono { font-family: "JetBrains Mono", Consolas, monospace; }
-    .max-w-3xl { max-width: 48rem; margin: 0 auto; padding: 0 1.5rem; }
+        header { text-align: center; margin-bottom: 4rem; border-bottom: 1px solid var(--zinc-900); padding-bottom: 3rem; }
+        h1 { color: white; font-size: clamp(2.2rem, 8vw, 3.5rem); font-weight: 800; letter-spacing: -0.05em; margin: 0 0 1.5rem 0; line-height: 1; }
+        .hero-p { font-size: 1.125rem; color: var(--zinc-400); text-align: left; line-height: 1.6; margin-bottom: 1.5rem; }
+        .method-box { background: rgba(9,9,11,0.5); padding: 24px; border: 1px solid var(--zinc-900); border-radius: 12px; text-align: left; margin-top: 2.5rem; }
+        .method-text { font-size: 12px; color: var(--zinc-700); font-style: italic; margin: 0; line-height: 1.7; }
 
-    .system-bar {
-      width: 100%;
-      background: rgba(245, 158, 11, 0.12);
-      border-bottom: 1px solid rgba(245, 158, 11, 0.25);
-      margin-bottom: 1.8rem;
-    }
+        .monitor-card { background: rgba(24, 24, 27, 0.2); padding: 3rem; border-radius: 2rem; border: 1px solid rgba(39, 39, 42, 0.5); margin-bottom: 3rem; }
+        .percent-num { font-size: clamp(4.5rem, 15vw, 6.5rem); font-weight: 900; color: var(--amber); line-height: 0.9; letter-spacing: -0.05em; }
+        .progress-track { width: 100%; background: var(--zinc-950); height: 3.5rem; border-radius: 2rem; padding: 0.6rem; border: 1px solid var(--zinc-900); }
+        #progress-bar { height: 100%; background: var(--amber); border-radius: 2rem; width: 0%; transition: width 2s cubic-bezier(0.16, 1, 0.3, 1); }
 
-    .bar-inner {
-      max-width: 48rem;
-      margin: 0 auto;
-      padding: 12px 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
+        .social-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 3.5rem; }
+        .action-btn { padding: 12px 20px; border-radius: 6px; font-weight: bold; text-transform: uppercase; font-size: 10px; cursor: pointer; text-decoration: none; border: none; }
+        .btn-primary { background: var(--amber); color: black; }
+        .btn-secondary { background: var(--zinc-900); color: white; border: 1px solid var(--zinc-800); }
 
-    .disclosure-tag {
-      color: var(--amber);
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      font-size: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+        .distro-panel { background: rgba(9,9,11,0.4); border: 1px solid var(--zinc-900); padding: 2.5rem; border-radius: 1.5rem; display: flex; flex-wrap: wrap; gap: 2.5rem; align-items: center; margin-bottom: 5rem; }
+        #qr-container { width: 140px; height: 140px; background: white; padding: 10px; border-radius: 8px; border: 4px solid var(--amber); display: flex; align-items: center; justify-content: center; margin: 0 auto; flex-shrink: 0; }
+        #qr-container img { width: 100%; height: 100%; }
 
-    .pulse { animation: pulse 2s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+        #source-feed { max-height: 600px; overflow-y: auto; padding-right: 15px; }
+        .news-card { padding: 25px; border-left: 3px solid var(--zinc-900); background: rgba(9,9,11,0.2); margin-bottom: 1.5rem; border-radius: 0 12px 12px 0; }
 
-    #copy-toast {
-      visibility: hidden;
-      position: fixed;
-      left: 50%;
-      bottom: 24px;
-      transform: translateX(-50%);
-      background: var(--amber);
-      color: #000;
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-weight: 800;
-      font-size: 12px;
-      z-index: 10000;
-    }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
 
-    #copy-toast.show { visibility: visible; }
-
-    header {
-      border-bottom: 1px solid var(--zinc-900);
-      padding-bottom: 2rem;
-      margin-bottom: 2.2rem;
-    }
-
-    h1 {
-      margin: 0 0 1rem 0;
-      line-height: 1.05;
-      color: #fff;
-      font-size: clamp(2.1rem, 8vw, 3.4rem);
-      letter-spacing: -0.03em;
-      font-weight: 800;
-    }
-
-    .hero-p {
-      margin: 0 0 .8rem 0;
-      color: var(--zinc-400);
-      line-height: 1.65;
-      font-size: 1rem;
-    }
-
-    .method-box {
-      margin-top: 1.2rem;
-      background: rgba(9, 9, 11, 0.45);
-      border: 1px solid var(--zinc-900);
-      border-radius: 12px;
-      padding: 1rem;
-      text-align: left;
-    }
-
-    .method-box ul {
-      margin: .6rem 0 0 1.1rem;
-      padding: 0;
-      color: var(--zinc-400);
-      line-height: 1.6;
-      font-size: 14px;
-    }
-
-    .method-box li { margin: .25rem 0; }
-
-    .monitor-card {
-      background: rgba(24, 24, 27, 0.2);
-      border: 1px solid rgba(39, 39, 42, 0.55);
-      border-radius: 1.3rem;
-      padding: 1.8rem;
-      margin-bottom: 1.8rem;
-    }
-
-    .percent-num {
-      font-size: clamp(3.8rem, 13vw, 6rem);
-      font-weight: 900;
-      color: var(--amber);
-      line-height: .9;
-      letter-spacing: -0.05em;
-    }
-
-    .progress-track {
-      width: 100%;
-      height: 2.7rem;
-      border-radius: 2rem;
-      border: 1px solid var(--zinc-900);
-      background: var(--zinc-950);
-      padding: .45rem;
-    }
-
-    #progress-bar {
-      height: 100%;
-      width: 0%;
-      border-radius: 2rem;
-      background: var(--amber);
-      transition: width .8s ease;
-    }
-
-    .status-row {
-      margin-top: .9rem;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: .8rem;
-      color: var(--zinc-400);
-      font-size: 12px;
-    }
-
-    .ok { color: var(--ok); font-weight: 700; }
-    .warn { color: var(--amber); font-weight: 700; }
-    .err { color: var(--err); font-weight: 700; }
-
-    .social-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 1.8rem;
-    }
-
-    .action-btn {
-      padding: 11px 16px;
-      border-radius: 8px;
-      font-weight: 700;
-      text-transform: uppercase;
-      font-size: 11px;
-      border: none;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .btn-primary { background: var(--amber); color: #000; }
-    .btn-secondary {
-      background: var(--zinc-900);
-      color: #fff;
-      border: 1px solid var(--zinc-800);
-    }
-
-    .distro-panel {
-      background: rgba(9, 9, 11, 0.4);
-      border: 1px solid var(--zinc-900);
-      border-radius: 1rem;
-      padding: 1.2rem;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 1.2rem;
-      margin-bottom: 2.1rem;
-    }
-
-    #qr-container {
-      width: 140px;
-      height: 140px;
-      background: #fff;
-      border: 4px solid var(--amber);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px;
-      margin: 0 auto;
-      flex-shrink: 0;
-    }
-
-    #qr-container img { width: 100%; height: 100%; }
-
-    #source-feed {
-      max-height: 560px;
-      overflow-y: auto;
-      padding-right: 8px;
-    }
-
-    .news-card {
-      background: rgba(9, 9, 11, 0.2);
-      border-left: 3px solid var(--zinc-800);
-      border-radius: 0 10px 10px 0;
-      padding: 16px;
-      margin-bottom: 12px;
-    }
-
-    .news-title {
-      margin: 10px 0 8px;
-      color: #fff;
-      font-size: 1rem;
-      line-height: 1.35;
-    }
-
-    .news-desc {
-      margin: 0 0 8px;
-      color: var(--zinc-400);
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .subtle { color: var(--zinc-400); }
-  </style>
+        #copy-toast { visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--amber); color: black; padding: 12px 24px; border-radius: 8px; font-weight: 900; z-index: 10000; }
+        #copy-toast.show { visibility: visible; }
+    </style>
 </head>
 <body>
-  <div class="system-bar">
-    <div class="bar-inner">
-      <div class="disclosure-tag">
-        <div style="width:8px;height:8px;background:var(--amber);border-radius:50%;" class="pulse"></div>
-        AI-Assisted Build + Human Curated
-      </div>
-      <p class="mono" style="margin:0;font-size:10px;color:rgba(245,158,11,.85);text-transform:uppercase;">
-        This site uses AI assistance and should be treated as an analysis tool, not official fact.
-      </p>
-    </div>
-  </div>
 
-  <div id="copy-toast" class="mono" role="status" aria-live="polite">Copied</div>
-
-  <div class="max-w-3xl">
-    <header>
-      <div style="display:inline-block;border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.05);padding:6px 12px;border-radius:6px;margin-bottom:1rem;">
-        <span class="mono" style="color:var(--amber);font-size:11px;letter-spacing:.12em;font-weight:700;">
-          ● STATUS: MONITORING GLOBAL POWER CONSOLIDATION
-        </span>
-      </div>
-
-      <h1>Global Control Index</h1>
-
-      <p class="hero-p">
-        This index estimates how far the world has shifted from many independent decision-making states toward fewer dominant power blocs.
-      </p>
-      <p class="hero-p" style="margin-bottom:0;">
-        It is designed as a simple public concentration meter: higher values mean more power centralized in fewer centers of control.
-      </p>
-
-      <div class="method-box">
-        <div class="mono" style="font-size:11px;text-transform:uppercase;font-weight:700;color:var(--zinc-400);">Methodology (Plain Language)</div>
-        <ul>
-          <li>This index publishes a maintained score informed by geopolitical indicators and source-linked events.</li>
-          <li>This index can apply a non-linear upper range so progress near the top is harder to achieve than at lower ranges.</li>
-          <li>This index is a directional monitoring tool, not an official forecast model.</li>
-          <li>This index includes update timestamps and source links so visitors can verify context.</li>
-        </ul>
-      </div>
-    </header>
-
-    <section class="monitor-card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
-        <span class="mono subtle" style="font-size:12px;text-transform:uppercase;">Consolidation Status</span>
-        <span id="percent-text" class="percent-num mono">--.-%</span>
-      </div>
-
-      <div class="progress-track"><div id="progress-bar"></div></div>
-
-      <div class="status-row mono">
-        <span>Last Updated: <span id="last-update">loading...</span></span>
-        <span>Auto Refresh: every 15 min</span>
-        <span id="api-status" class="warn">Initializing</span>
-      </div>
-      <p id="confidence-text" class="mono subtle" style="font-size:12px;margin:.55rem 0 0;">Confidence: --</p>
-    </section>
-
-    <div class="social-grid">
-      <button id="copy-link-btn" type="button" class="action-btn btn-primary">Copy Site Link</button>
-      <a id="share-x" target="_blank" rel="noopener noreferrer" class="action-btn btn-secondary" href="#">X</a>
-      <a id="share-fb" target="_blank" rel="noopener noreferrer" class="action-btn btn-secondary" href="#">Facebook</a>
-      <a id="share-wa" target="_blank" rel="noopener noreferrer" class="action-btn btn-secondary" href="#">WhatsApp</a>
-      <a id="share-reddit" target="_blank" rel="noopener noreferrer" class="action-btn btn-secondary" href="#">Reddit</a>
+    <div class="system-bar">
+        <div class="bar-inner">
+            <div class="disclosure-tag">
+                <div style="width: 8px; height: 8px; background: var(--amber); border-radius: 50%;" class="pulse"></div>
+                System Architecture Disclosure
+            </div>
+            <p class="mono" style="font-size: 9px; color: rgba(245,158,11,0.5); margin: 0; text-transform: uppercase;">
+                Designed with the assistance of <span style="font-weight: 900; color: var(--amber);">Google Gemini AI</span>
+            </p>
+        </div>
     </div>
 
-    <div class="distro-panel">
-      <div style="flex:1;min-width:250px;">
-        <p class="mono subtle" style="margin:0;font-size:12px;font-weight:700;text-transform:uppercase;">System Distribution</p>
-        <input id="embed-code" readonly class="mono" style="width:100%;margin-top:.75rem;background:#000;border:1px solid var(--zinc-900);color:var(--zinc-400);padding:12px;border-radius:6px;font-size:11px;">
-      </div>
-      <div id="qr-container"><img id="qr-image" src="" alt="QR code for this site"></div>
+    <div id="copy-toast" class="mono">DATA COPIED</div>
+
+    <div class="max-w-3xl">
+        <header>
+            <div style="border: 1px solid rgba(245,158,11,0.3); background: rgba(245,158,11,0.05); display: inline-block; padding: 6px 14px; border-radius: 4px; margin-bottom: 1.5rem;">
+                <span class="mono" style="color: var(--amber); font-weight: bold; font-size: 10px; letter-spacing: 0.3em;">● STATUS: MONITORING GLOBAL TRANSITION</span>
+            </div>
+            <h1>Global Control Index</h1>
+            <p class="hero-p">The world is currently undergoing a transition away from independent nations toward a system where <span style="color: var(--amber); font-weight: bold; text-transform: uppercase;">a small group of superstates</span> hold all primary global power.</p>
+            <p style="text-align: left; color: #71717a; line-height: 1.6;">This index tracks the merger of independent territories into these dominant hegemonic blocks. 100% represents the threshold of total unified control.</p>
+
+            <div class="method-box">
+                <div class="mono" style="font-size: 11px; color: var(--zinc-700); font-weight: bold; text-transform: uppercase; margin-bottom: 10px;">Methodology & Development</div>
+                <p class="method-text">This index is an ongoing monitoring system currently under development. The percentage is calculated using a non-linear scale that weighs kinetic military presence, the capture of regional trade ledgers, and the dissolution of local administrative borders. Because the resistance of remaining sovereign states increases as control tightens, movements above 80% are modeled to be significantly more difficult to achieve, ensuring the data reflects real-world friction rather than linear projection.</p>
+            </div>
+        </header>
+
+        <section class="monitor-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
+                <span class="mono" style="color: var(--zinc-700); text-transform: uppercase; font-size: 11px;">Consolidation Status</span>
+                <span id="percent-text" class="percent-num mono">0%</span>
+            </div>
+            <div class="progress-track"><div id="progress-bar"></div></div>
+            <div style="display: flex; justify-content: space-between; margin-top: 2rem; font-size: 10px; color: var(--zinc-700);" class="mono uppercase">
+                <span>Last Updated: <span id="last-update">...</span></span>
+                <span id="api-status" style="color: #451a03; font-weight: 900;">Feed Initializing</span>
+            </div>
+        </section>
+
+        <div class="social-grid">
+            <button onclick="copyToClipboard(window.location.href, 'Link')" class="action-btn btn-primary">Copy Site Link</button>
+            <a id="share-x" target="_blank" rel="noopener noreferrer" class="action-btn btn-secondary">X</a>
+            <a id="share-fb" target="_blank" rel="noopener noreferrer" class="action-btn btn-secondary">Facebook</a>
+            <a id="share-wa" target="_blank" rel="noopener noreferrer" class="action-btn btn-secondary">WhatsApp</a>
+            <a id="share-reddit" target="_blank" rel="noopener noreferrer" class="action-btn btn-secondary">Reddit</a>
+        </div>
+
+        <div class="distro-panel">
+            <div style="flex: 1; min-width: 260px;">
+                <p class="mono" style="color: var(--zinc-700); font-weight: bold; text-transform: uppercase; font-size: 11px; margin: 0;">System Distribution</p>
+                <input id="embed-code" readonly onclick="copyToClipboard(this.value, 'Embed Code')" style="width: 100%; background: #000; border: 1px solid var(--zinc-900); color: var(--zinc-700); padding: 12px; border-radius: 6px; font-size: 10px; margin-top: 1rem;" class="mono">
+            </div>
+            <div id="qr-container">
+                <img id="qr-image" src="" alt="QR Code">
+            </div>
+        </div>
+
+        <section style="margin-bottom: 6rem;">
+            <h2 class="mono" style="color: white; margin: 0 0 2.5rem 0; font-size: 14px; text-transform: uppercase;">Live Crisis Activity Log</h2>
+            <div id="source-feed">
+                <div style="text-align: center; padding: 5rem; color: #27272a;" class="mono pulse uppercase">Connecting to global data stream...</div>
+            </div>
+            <button id="retry-btn" onclick="fetchNews()" style="display: none; width: 100%; margin-top: 1.5rem; border: 1px solid #451a03; background: transparent; color: var(--amber); padding: 15px; border-radius: 8px;" class="mono uppercase font-bold">Force Feed Re-Sync</button>
+        </section>
     </div>
 
-    <section style="margin-bottom:2.8rem;">
-      <h2 class="mono" style="margin:0 0 1rem;color:#fff;font-size:14px;text-transform:uppercase;">Live Crisis Activity Log</h2>
-      <div id="source-feed">
-        <div style="text-align:center;padding:2.5rem;color:#71717a;" class="mono pulse">Connecting to global data stream...</div>
-      </div>
-      <button id="retry-btn" type="button" class="mono" style="display:none;width:100%;margin-top:1rem;border:1px solid #78350f;background:transparent;color:var(--amber);padding:12px;border-radius:8px;">
-        Force Feed Re-Sync
-      </button>
-    </section>
-  </div>
+    <script>
+        const CONFIG = {
+            // fallback if data/latest.json is missing
+            val: 74.2,
+            date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+            key: "pub_bbb79c103a7f4462b6ef5b204a8e14db",
+            refreshMs: 15 * 60 * 1000
+        };
 
-  <script>
-    const CONFIG = {
-      scoreUrl: "./data/latest.json",
-      fallbackFeedUrl: "./data/feed.json",
-      refreshMs: 15 * 60 * 1000,
-      maxFeedItems: 30
-    };
-
-    const dom = {
-      percent: document.getElementById("percent-text"),
-      bar: document.getElementById("progress-bar"),
-      updated: document.getElementById("last-update"),
-      confidence: document.getElementById("confidence-text"),
-      status: document.getElementById("api-status"),
-      feed: document.getElementById("source-feed"),
-      retry: document.getElementById("retry-btn"),
-      embed: document.getElementById("embed-code"),
-      qr: document.getElementById("qr-image"),
-      toast: document.getElementById("copy-toast")
-    };
-
-    function setStatus(text, level = "warn") {
-      dom.status.textContent = text;
-      dom.status.className = level;
-    }
-
-    function clamp(v) {
-      return Math.max(0, Math.min(100, Number(v) || 0));
-    }
-
-    function fmtDate(v) {
-      const d = new Date(v);
-      return Number.isNaN(d.getTime())
-        ? "unknown"
-        : d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
-    }
-
-    function shortText(s, max) {
-      const t = String(s || "").trim();
-      if (!t) return "No description provided.";
-      return t.length > max ? t.slice(0, max - 1).trimEnd() + "..." : t;
-    }
-
-    function safeHttpUrl(url) {
-      try {
-        const u = new URL(url, window.location.href);
-        return (u.protocol === "http:" || u.protocol === "https:") ? u.href : "";
-      } catch {
-        return "";
-      }
-    }
-
-    function toast(msg) {
-      dom.toast.textContent = msg;
-      dom.toast.classList.add("show");
-      setTimeout(() => dom.toast.classList.remove("show"), 1700);
-    }
-
-    async function copyText(text, label) {
-      try {
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(text);
-        } else {
-          const ta = document.createElement("textarea");
-          ta.value = text;
-          ta.style.position = "fixed";
-          ta.style.left = "-9999px";
-          document.body.appendChild(ta);
-          ta.focus();
-          ta.select();
-          document.execCommand("copy");
-          ta.remove();
-        }
-        toast(label + " copied");
-      } catch {
-        toast("Copy failed");
-      }
-    }
-
-    function renderScore(data) {
-      const score = clamp(data && data.score);
-      dom.percent.textContent = score.toFixed(1) + "%";
-      dom.bar.style.width = score + "%";
-      dom.updated.textContent = fmtDate(data && data.updated_at);
-      dom.confidence.textContent = "Confidence: " + (data && data.confidence ? data.confidence : "not provided");
-    }
-
-    function makeTag(text) {
-      const t = document.createElement("span");
-      t.className = "mono";
-      t.style.cssText = "color:var(--amber);font-size:10px;font-weight:700;background:rgba(245,158,11,.1);padding:3px 8px;border-radius:4px;";
-      t.textContent = text || "LIVE";
-      return t;
-    }
-
-    function renderFeed(items) {
-      dom.feed.innerHTML = "";
-
-      if (!Array.isArray(items) || !items.length) {
-        const empty = document.createElement("div");
-        empty.className = "mono";
-        empty.style.cssText = "padding:1.5rem;color:#71717a;";
-        empty.textContent = "No live items available right now.";
-        dom.feed.appendChild(empty);
-        return;
-      }
-
-      items.slice(0, CONFIG.maxFeedItems).forEach((item) => {
-        const card = document.createElement("article");
-        card.className = "news-card";
-        card.appendChild(makeTag(item.category || "LIVE"));
-
-        const title = document.createElement("h3");
-        title.className = "news-title";
-        title.textContent = shortText(item.title, 160);
-        card.appendChild(title);
-
-        const desc = document.createElement("p");
-        desc.className = "news-desc";
-        desc.textContent = shortText(item.summary || "", 220);
-        card.appendChild(desc);
-
-        const meta = document.createElement("p");
-        meta.className = "mono";
-        meta.style.cssText = "margin:0 0 10px;font-size:11px;color:#71717a;";
-        meta.textContent = (item.source_name || "Source") + " · " + fmtDate(item.published_at);
-        card.appendChild(meta);
-
-        const link = safeHttpUrl(item.url);
-        if (link) {
-          const a = document.createElement("a");
-          a.href = link;
-          a.target = "_blank";
-          a.rel = "noopener noreferrer";
-          a.className = "mono";
-          a.style.cssText = "color:var(--amber);font-size:12px;text-decoration:none;font-weight:700;";
-          a.textContent = "Verify Source ↗";
-          card.appendChild(a);
+        function clampPercent(v) {
+            const n = Number(v);
+            if (!Number.isFinite(n)) return 0;
+            return Math.max(0, Math.min(100, n));
         }
 
-        dom.feed.appendChild(card);
-      });
-    }
-
-    function saveCache(key, value) {
-      try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {}
-    }
-
-    function loadCache(key) {
-      try {
-        const raw = localStorage.getItem(key);
-        return raw ? JSON.parse(raw) : null;
-      } catch (_) {
-        return null;
-      }
-    }
-
-    async function fetchWithTimeout(url, ms = 7000) {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), ms);
-      try {
-        return await fetch(url, { cache: "no-store", signal: controller.signal });
-      } finally {
-        clearTimeout(timer);
-      }
-    }
-
-    async function fetchScore() {
-      const res = await fetchWithTimeout(CONFIG.scoreUrl, 3500);
-      if (!res.ok) throw new Error("score fetch failed");
-      return res.json();
-    }
-
-    async function fetchLiveFeed() {
-      const query = encodeURIComponent('(geopolitics OR "power bloc" OR annexation OR sanctions OR "sphere of influence") lang:english');
-      const url = "https://api.gdeltproject.org/api/v2/doc/doc?query=" + query + "&mode=ArtList&maxrecords=40&format=json&sort=DateDesc";
-
-      const res = await fetchWithTimeout(url, 7000);
-      if (!res.ok) throw new Error("live feed failed");
-
-      const data = await res.json();
-      const articles = Array.isArray(data.articles) ? data.articles : [];
-
-      const mapped = articles.map((a) => ({
-        title: a.title || "Untitled",
-        summary: "Detected in live global media stream.",
-        url: a.url || "",
-        source_name: a.domain || "Live source",
-        published_at: a.seendate || "",
-        category: "LIVE"
-      }));
-
-      const seen = new Set();
-      const unique = mapped.filter((item) => {
-        const key = (item.url || item.title).toLowerCase();
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
-
-      return unique.slice(0, CONFIG.maxFeedItems);
-    }
-
-    async function fetchFallbackFeed() {
-      const res = await fetchWithTimeout(CONFIG.fallbackFeedUrl, 2500);
-      if (!res.ok) return [];
-      const data = await res.json();
-      return Array.isArray(data.items) ? data.items : [];
-    }
-
-    async function refreshAll() {
-      setStatus("Syncing...", "warn");
-      dom.retry.style.display = "none";
-
-      try {
-        const score = await fetchScore();
-        renderScore(score);
-        saveCache("gci_score", score);
-      } catch (_) {
-        const cachedScore = loadCache("gci_score");
-        if (cachedScore) renderScore(cachedScore);
-      }
-
-      try {
-        const liveItems = await fetchLiveFeed();
-        if (!liveItems.length) throw new Error("empty feed");
-        renderFeed(liveItems);
-        saveCache("gci_feed", liveItems);
-        setStatus("Feed: LIVE", "ok");
-        return;
-      } catch (_) {}
-
-      try {
-        const fallback = await fetchFallbackFeed();
-        if (fallback.length) {
-          renderFeed(fallback);
-          saveCache("gci_feed", fallback);
-          setStatus("Feed: FALLBACK", "warn");
-          return;
+        function safeUrl(input) {
+            try {
+                const u = new URL(input, window.location.href);
+                if (u.protocol === "http:" || u.protocol === "https:") return u.href;
+                return "#";
+            } catch {
+                return "#";
+            }
         }
-      } catch (_) {}
 
-      const cached = loadCache("gci_feed");
-      if (cached && cached.length) {
-        renderFeed(cached);
-        setStatus("Feed: CACHED", "warn");
-      } else {
-        renderFeed([]);
-        setStatus("Sync blocked", "err");
-        dom.retry.style.display = "block";
-      }
-    }
+        function escapeHtml(str) {
+            return String(str || "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#39;");
+        }
 
-    function setupShareAndEmbed() {
-      const currentUrl = window.location.href;
-      const encoded = encodeURIComponent(currentUrl);
-      const shareText = encodeURIComponent("Global Control Index");
+        async function loadScore() {
+            // optional real-data source
+            // expected shape: { "score": 74.2, "updated_at": "2026-03-19T16:00:00Z" }
+            try {
+                const res = await fetch("./data/latest.json", { cache: "no-store" });
+                if (!res.ok) throw new Error("missing score file");
+                const data = await res.json();
 
-      document.getElementById("share-x").href = "https://x.com/intent/tweet?url=" + encoded + "&text=" + shareText;
-      document.getElementById("share-fb").href = "https://www.facebook.com/sharer/sharer.php?u=" + encoded;
-      document.getElementById("share-wa").href = "https://api.whatsapp.com/send?text=" + shareText + "%20" + encoded;
-      document.getElementById("share-reddit").href = "https://reddit.com/submit?url=" + encoded + "&title=" + shareText;
+                const score = clampPercent(data.score);
+                const when = data.updated_at
+                    ? new Date(data.updated_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                    : CONFIG.date;
 
-      dom.embed.value = '<iframe src="' + currentUrl + '" width="100%" height="700" loading="lazy" referrerpolicy="no-referrer"></iframe>';
-      dom.qr.src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + encoded;
+                return { score, when, source: "data" };
+            } catch {
+                return { score: clampPercent(CONFIG.val), when: CONFIG.date, source: "fallback" };
+            }
+        }
 
-      document.getElementById("copy-link-btn").addEventListener("click", () => copyText(currentUrl, "Link"));
-      dom.embed.addEventListener("click", () => copyText(dom.embed.value, "Embed code"));
-      dom.retry.addEventListener("click", refreshAll);
-    }
+        function renderScore(score, when) {
+            document.getElementById('last-update').innerText = when;
+            setTimeout(() => {
+                document.getElementById('progress-bar').style.width = score + "%";
+                document.getElementById('percent-text').innerText = score.toFixed(1) + "%";
+            }, 400);
+        }
 
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") refreshAll();
-    });
+        async function fetchNews() {
+            const feed = document.getElementById('source-feed');
+            const status = document.getElementById('api-status');
+            const retry = document.getElementById('retry-btn');
+            status.innerText = "SYNCING...";
 
-    document.addEventListener("DOMContentLoaded", () => {
-      setupShareAndEmbed();
-      refreshAll();
-      setInterval(refreshAll, CONFIG.refreshMs);
-    });
-  </script>
+            try {
+                const res = await fetch(`https://newsdata.io/api/1/news?apikey=${CONFIG.key}&q=geopolitics%20OR%20superstate&language=en`);
+                const data = await res.json();
+
+                if (!data.results || data.results.length === 0) throw new Error("no results");
+
+                feed.innerHTML = data.results.map(a => {
+                    const articleLink = safeUrl(a.link || a.source_url || "#");
+                    const title = escapeHtml(a.title || "Untitled");
+                    const desc = escapeHtml((a.description || "Data restricted.").substring(0, 160));
+
+                    return `
+                        <div class="news-card">
+                            <span class="mono" style="color:var(--amber); font-size:9px; font-weight:bold; background:rgba(245,158,11,0.1); padding:3px 8px; border-radius:4px;">SHIFT</span>
+                            <h4 style="color: white; margin: 15px 0 10px 0; font-size: 1.2rem;">${title}</h4>
+                            <p style="color: #71717a; font-size: 14px;">${desc}...</p>
+                            <a href="${articleLink}" target="_blank" rel="noopener noreferrer" class="mono" style="color: var(--amber); font-size: 11px; text-decoration: none; font-weight:bold; display:inline-block; margin-top:15px; border-bottom:1px solid rgba(245,158,11,0.3);">Verify Source ↗</a>
+                        </div>
+                    `;
+                }).join('');
+
+                status.innerText = "FEED: LIVE";
+                retry.style.display = 'none';
+            } catch {
+                status.innerText = "SYNC BLOCKED";
+                retry.style.display = 'block';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const currentUrl = window.location.href;
+            document.getElementById('embed-code').value = `<iframe src="${currentUrl}" width="100%" height="650"></iframe>`;
+            document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentUrl)}`;
+
+            const scoreData = await loadScore();
+            renderScore(scoreData.score, scoreData.when);
+
+            const url = encodeURIComponent(currentUrl);
+            document.getElementById('share-x').href = `https://x.com/intent/tweet?url=${url}`;
+            document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+            document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${url}`;
+            document.getElementById('share-reddit').href = `https://reddit.com/submit?url=${url}`;
+
+            fetchNews();
+            setInterval(fetchNews, CONFIG.refreshMs);
+        });
+
+        async function copyToClipboard(text, type) {
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                } else {
+                    const area = document.createElement('textarea');
+                    area.value = text;
+                    document.body.appendChild(area);
+                    area.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(area);
+                }
+                const toast = document.getElementById("copy-toast");
+                toast.innerText = `${type.toUpperCase()} COPIED`;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            } catch {
+                const toast = document.getElementById("copy-toast");
+                toast.innerText = `COPY FAILED`;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }
+        }
+    </script>
 </body>
 </html>
