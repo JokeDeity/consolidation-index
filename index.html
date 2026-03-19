@@ -33,6 +33,7 @@
         #source-feed::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
         #source-feed::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
 
+        /* TOAST NOTIFICATION */
         #copy-toast {
             visibility: hidden; position: fixed; bottom: 30px; left: 50%;
             transform: translateX(-50%); background: #f59e0b; color: black;
@@ -67,7 +68,7 @@
             </div>
             <h1 class="text-4xl md:text-5xl font-bold tracking-tighter text-white mb-6">Global Control Index</h1>
             
-            <div class="space-y-6 text-zinc-400 text-lg max-w-2xl mx-auto leading-relaxed">
+            <div class="space-y-6 text-zinc-400 text-lg max-w-2xl mx-auto leading-relaxed text-left md:text-center">
                 <p>
                     The world is currently undergoing a transition away from independent nations toward a system where <span class="text-amber-500 font-semibold uppercase tracking-wide">a small group of superstates</span> hold all primary global power.
                 </p>
@@ -100,10 +101,20 @@
             </div>
         </section>
 
-        <div class="flex flex-wrap gap-2 justify-center mb-20 opacity-60 hover:opacity-100 transition-opacity">
-            <button onclick="copyToClipboard()" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono hover:text-amber-500">Copy Link</button>
-            <a id="share-x" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono hover:text-white">Share on X</a>
-        </div>
+        <section class="mb-20 space-y-8">
+            <div class="flex flex-wrap gap-2 justify-center">
+                <button onclick="copyToClipboard()" class="px-5 py-2.5 bg-amber-500 text-black rounded text-[10px] font-bold uppercase mono hover:bg-amber-400 transition-all">Copy Site Link</button>
+                <a id="share-x" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono hover:bg-white hover:text-black transition-all">Share on X</a>
+                <a id="share-fb" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono hover:bg-blue-600 hover:text-white transition-all">Facebook</a>
+                <a id="share-reddit" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono hover:bg-orange-600 hover:text-white transition-all">Reddit</a>
+                <a id="share-wa" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono hover:bg-green-600 hover:text-white transition-all">WhatsApp</a>
+            </div>
+
+            <div class="max-w-md mx-auto text-center space-y-3">
+                <p class="text-[9px] text-zinc-600 uppercase mb-1 mono tracking-widest">Embed Tracker on Third-Party Site</p>
+                <input id="embed-code" readonly class="w-full bg-zinc-950 border border-zinc-900 text-zinc-700 text-[10px] px-4 py-2 rounded mono focus:outline-none text-center cursor-pointer hover:border-zinc-700 transition-colors">
+            </div>
+        </section>
 
         <section class="mb-24">
             <div class="flex items-center gap-4 mb-6">
@@ -123,7 +134,7 @@
         </section>
 
         <footer class="pb-12 text-center opacity-20 hover:opacity-100 transition-opacity">
-            <p class="text-[10px] uppercase tracking-[0.3em] text-zinc-800 mono">GCI Independent Awareness Project // 2026</p>
+            <p class="text-[10px] uppercase tracking-[0.3em] text-zinc-800 mono italic">GCI Independent Awareness Project // March 2026</p>
         </footer>
     </div>
 
@@ -133,7 +144,7 @@
             updateDate: "March 19, 2026",
             newsDataKey: "pub_bbb79c103a7f4462b6ef5b204a8e14db", 
             gNewsKey: "8403b5973e11d28dbe0b7420a558d4ce",
-            cacheLimit: 60 * 60 * 1000 // 1 hour caching to save API limits
+            cacheLimit: 60 * 60 * 1000 
         };
 
         async function fetchNews() {
@@ -141,7 +152,6 @@
             const status = document.getElementById('api-status');
             const now = new Date().getTime();
 
-            // 1. SMART CACHING
             const cache = localStorage.getItem('gci_news_cache');
             const ts = localStorage.getItem('gci_news_ts');
 
@@ -151,12 +161,10 @@
                 return;
             }
 
-            // 2. DUAL-API AUTOMATION
             status.innerText = "Syncing News Data...";
             status.classList.add('pulse', 'text-amber-600');
 
             try {
-                // Try NewsData.io (200 daily requests)
                 let response = await fetch(`https://newsdata.io/api/1/news?apikey=${CONFIG.newsDataKey}&q=superstate%20OR%20geopolitics%20OR%20sovereignty&language=en`);
                 let data = await response.json();
                 let articles = [];
@@ -169,7 +177,6 @@
                         url: a.link
                     }));
                 } else {
-                    // Failover to GNews (100 daily requests)
                     response = await fetch(`https://gnews.io/api/v4/search?q=geopolitics&lang=en&apikey=${CONFIG.gNewsKey}`);
                     data = await response.json();
                     articles = data.articles.map(a => ({
@@ -213,14 +220,23 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            const currentUrl = window.location.href;
+            
             setTimeout(() => {
                 document.getElementById('progress-bar').style.width = CONFIG.indexPercent + "%";
                 document.getElementById('percent-text').innerText = CONFIG.indexPercent + "%";
             }, 500);
             document.getElementById('last-update').innerText = CONFIG.updateDate;
             
+            // CONFIGURE SHARING LINKS
             const shareText = `The Global Control Index is at ${CONFIG.indexPercent}%. The era of independent nations is closing. Monitor live here: `;
-            document.getElementById('share-x').href = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(window.location.href)}`;
+            document.getElementById('share-x').href = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(currentUrl)}`;
+            document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`;
+            document.getElementById('share-reddit').href = `https://reddit.com/submit?url=${encodeURIComponent(currentUrl)}&title=${encodeURIComponent(shareText)}`;
+            document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + currentUrl)}`;
+            
+            // CONFIGURE EMBED CODE
+            document.getElementById('embed-code').value = `<iframe src="${currentUrl}" width="100%" height="650" style="border:none;"></iframe>`;
             
             fetchNews();
         });
