@@ -1,5 +1,5 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { computeGci } from "../algorithm/gci-algorithm.mjs";
+import { classifyArticle, computeGci } from "../algorithm/gci-algorithm.mjs";
 
 const DATA_DIR = new URL("../data/", import.meta.url);
 const LATEST_PATH = new URL("../data/latest.json", import.meta.url);
@@ -47,7 +47,7 @@ async function fetchGdeltArticles(query) {
   const articles = Array.isArray(data.articles) ? data.articles : [];
   return articles.map((a) => ({
     title: a.title || "Untitled",
-    description: "Detected in global media stream.",
+    description: a.seendate ? `Detected in global media stream at ${a.seendate}.` : "Detected in global media stream.",
     content: "",
     summary: "Detected in global media stream.",
     link: a.url || "",
@@ -95,14 +95,37 @@ function deriveStructuralState(currentState, articles) {
 }
 
 function toFeedItems(articles) {
-  return articles.slice(0, 30).map((a) => ({
-    title: a.title,
-    summary: a.description || "Detected in global media stream.",
-    url: a.link,
-    source_name: a.source_name,
-    published_at: a.pubDate,
-    category: "LIVE"
-  }));
+  const scored = articles.map((a) => {
+    const c = classifyArticle(a);
+    const relevance = c.blocAlignment + c.coercivePressure + c.territorialPressure + c.regimePressure;
+    let category = "SHIFT";
+    if (c.territorialPressure >= c.coercivePressure && c.territorialPressure >= c.regimePressure && c.territorialPressure >= c.blocAlignment) {
+      category = "TERRITORIAL";
+    } else if (c.coercivePressure >= c.regimePressure && c.coercivePressure >= c.blocAlignment) {
+      category = "COERCIVE";
+    } else if (c.regimePressure >= c.blocAlignment) {
+      category = "REGIME";
+    } else if (c.blocAlignment > 0) {
+      category = "ALIGNMENT";
+    }
+    return { ...a, relevance, category };
+  });
+
+  return scored
+    .filter((a) => a.relevance > 0)
+    .sort((a, b) => {
+      if (b.relevance !== a.relevance) return b.relevance - a.relevance;
+      return new Date(b.pubDate) - new Date(a.pubDate);
+    })
+    .slice(0, 30)
+    .map((a) => ({
+      title: a.title,
+      summary: a.description || "Detected in global media stream.",
+      url: a.link,
+      source_name: a.source_name,
+      published_at: a.pubDate,
+      category: a.category
+    }));
 }
 
 async function main() {
