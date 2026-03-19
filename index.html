@@ -4,253 +4,164 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GCI | Global Control Tracker</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #d4d4d8; scroll-behavior: smooth; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #d4d4d8; scroll-behavior: smooth; }
         .mono { font-family: 'JetBrains Mono', monospace; }
-        
-        /* PROGRESS BAR: THE PRIMARY VISUAL FOCUS */
-        .progress-glow { 
-            box-shadow: 0 0 40px rgba(245, 158, 11, 0.4); 
-            position: relative;
-            overflow: hidden;
-        }
-        
-        /* THE "SCANNING" LIGHT STREAK */
+        .progress-glow { box-shadow: 0 0 35px rgba(245, 158, 11, 0.5); position: relative; overflow: hidden; }
         .progress-glow::after {
-            content: "";
-            position: absolute;
-            top: 0; left: -100%;
-            width: 50%; height: 100%;
+            content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            animation: scan 4s infinite linear;
+            animation: scan 3s infinite linear;
         }
-
         @keyframes scan { 0% { left: -100%; } 100% { left: 150%; } }
-
-        /* PULSING STATUS INDICATOR */
         .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
-
-        /* CUSTOM SCROLLBAR FOR THE NEWS FEED */
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .6; } }
         #source-feed::-webkit-scrollbar { width: 4px; }
-        #source-feed::-webkit-scrollbar-track { background: #0a0a0a; }
-        #source-feed::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
-        #source-feed::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
-
-        /* TOAST NOTIFICATION STYLES */
-        #copy-toast {
-            visibility: hidden; position: fixed; bottom: 30px; left: 50%;
-            transform: translateX(-50%); background: #f59e0b; color: black;
-            padding: 8px 16px; border-radius: 4px; font-weight: bold; z-index: 100;
-        }
-        #copy-toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        #source-feed::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
 <body class="p-6 md:p-12">
 
-    <div id="copy-toast" class="mono text-[10px] uppercase tracking-tighter">Site Link Copied</div>
-
     <div class="max-w-3xl mx-auto">
-        
         <header class="mb-16 text-center">
             <div class="inline-block px-3 py-1 border border-amber-900/50 bg-amber-900/10 rounded mb-4">
-                <span class="text-[10px] uppercase tracking-[0.4em] text-amber-500 font-bold mono pulse">● System Live: Monitoring The Merger</span>
+                <span class="text-[10px] uppercase tracking-[0.4em] text-amber-500 font-bold mono pulse">● System Live: Tracking Sovereignty Erosion</span>
             </div>
             <h1 class="text-4xl md:text-5xl font-bold tracking-tighter text-white mb-6">Global Control Index</h1>
-            
             <div class="space-y-4 text-zinc-400 text-lg max-w-2xl mx-auto leading-relaxed">
-                <p>
-                    The world is moving away from independent nations and toward a system where <span class="text-amber-500 font-semibold">fewer than five groups</span> hold all the power. 
-                </p>
-                <p class="text-base text-zinc-500">
-                    This index tracks that transition. When the bar hits 100%, it means global competition has ended, and a single, unified control structure has taken over. We monitor military, economic, and land shifts to show the public the reality of this consolidation.
-                </p>
+                <p>The world is moving toward a system where <span class="text-amber-500 font-semibold">fewer than five groups</span> hold all global power.</p>
+                <p class="text-base text-zinc-500">This index tracks the "merger" of independent nations into hegemonic blocks. 100% represents the end of global competition and total unified control.</p>
             </div>
         </header>
 
         <section class="mb-12 bg-zinc-900/20 p-8 md:p-12 rounded-3xl border border-zinc-800/50">
             <div class="flex justify-between items-end mb-6">
-                <div class="mono uppercase text-[10px] tracking-widest text-zinc-500">
-                    Consolidation Status
-                </div>
+                <div class="mono uppercase text-[10px] tracking-widest text-zinc-500">Current Consolidation Level</div>
                 <span id="percent-text" class="text-7xl md:text-8xl font-black text-amber-500 mono tracking-tighter">0%</span>
             </div>
-
-            <div class="w-full bg-zinc-950 h-12 rounded-full p-2 border border-zinc-900 shadow-inner">
+            <div class="w-full bg-zinc-950 h-10 rounded-full p-1.5 border border-zinc-800 shadow-2xl">
                 <div id="progress-bar" class="bg-amber-500 h-full rounded-full progress-glow transition-all duration-[2000ms] ease-out" style="width: 0%"></div>
             </div>
-
             <div class="mt-8 flex justify-between items-center text-[10px] mono uppercase text-zinc-600 tracking-tighter">
-                <span>Last Updated: <span id="last-update" class="text-zinc-400">Loading...</span></span>
-                <span id="api-status" class="text-amber-900 font-bold">● Feed Synchronizing</span>
-            </div>
-        </section>
-
-        <section class="mb-20">
-            <div class="flex flex-wrap gap-2 justify-center mb-6">
-                <button onclick="copyToClipboard()" class="px-5 py-2.5 bg-amber-500 text-black rounded text-[10px] font-bold uppercase mono hover:bg-amber-400 transition-all">Copy Site Link</button>
-                <a id="share-x" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono hover:bg-white hover:text-black transition-all">Share on X</a>
-                <a id="share-fb" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono hover:bg-blue-600 hover:text-white transition-all">Facebook</a>
-                <a id="share-reddit" target="_blank" class="px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-bold uppercase mono hover:bg-orange-600 hover:text-white transition-all">Reddit</a>
+                <span>Last Sync: <span id="last-update" class="text-zinc-400">Loading...</span></span>
+                <span id="api-status" class="text-zinc-700 font-bold tracking-widest">Local Cache Mode</span>
             </div>
         </section>
 
         <section>
             <div class="flex items-center gap-4 mb-6">
-                <h2 class="text-xs uppercase tracking-[0.3em] text-white font-bold mono">Live Crisis Activity Log</h2>
+                <h2 class="text-xs uppercase tracking-[0.3em] text-white font-bold mono">Live Crisis Vectors</h2>
                 <div class="h-px bg-zinc-800 flex-grow"></div>
             </div>
-            
             <div id="source-feed" class="space-y-4 max-h-[600px] overflow-y-auto pr-4">
-                <div class="text-center py-20 mono text-xs text-zinc-700 italic">Connecting to global satellites...</div>
-            </div>
-            
-            <div class="mt-6 text-center border-t border-zinc-900 pt-6">
-                <p class="text-[9px] text-zinc-700 mono uppercase tracking-[0.4em]">End of visible record // Historical data archived</p>
+                <div class="text-center py-10 mono text-xs text-zinc-600 italic">Initializing encrypted news data...</div>
             </div>
         </section>
 
-        <footer class="mt-32 pb-12 text-center opacity-40 hover:opacity-100 transition-opacity">
-            <div class="mb-8">
-                <p class="text-[9px] text-zinc-600 uppercase mb-3 mono">Embed Tracker Code</p>
-                <input id="embed-code" readonly class="w-full max-w-sm bg-zinc-950 border border-zinc-900 text-zinc-700 text-[10px] px-4 py-2 rounded mono focus:outline-none text-center">
-            </div>
-            <p class="text-[10px] uppercase tracking-[0.3em] text-zinc-800 mono">GCI Independent Awareness Project // March 2026</p>
+        <footer class="mt-24 pb-12 text-center opacity-30">
+            <p class="text-[10px] uppercase tracking-[0.3em] text-zinc-700 mono italic">Independent Data Collective // March 2026</p>
         </footer>
     </div>
 
     <script>
-        /***********************************************************************
-         * GLOBAL CONFIGURATION & API KEYS
-         ***********************************************************************/
         const CONFIG = {
-            indexPercent: 74.2,      // Current level of global control
-            updateDate: "March 19, 2026",
-            // YOUR KEYS
-            newsDataKey: "pub_bbb79c103a7f4462b6ef5b204a8e14db", 
+            percent: 74.1, // Manually tweak this based on global status
+            updateTime: "March 19, 2026",
+            newsDataKey: "pub_bbb79c103a7f4462b6ef5b204a8e14db",
             gNewsKey: "8403b5973e11d28dbe0b7420a558d4ce",
-            cacheExpiry: 60 * 60 * 1000 // News will be stored for 1 hour locally
+            cacheLimit: 60 * 60 * 1000 // 1 hour in milliseconds
         };
 
-        /***********************************************************************
-         * NEWS AUTOMATION ENGINE (SMART CACHING)
-         ***********************************************************************/
-        async function fetchAutomatedNews() {
+        async function fetchNews() {
             const feed = document.getElementById('source-feed');
-            const apiStatus = document.getElementById('api-status');
+            const status = document.getElementById('api-status');
+            
+            // 1. CHECK CACHE FIRST (Saves your API limit)
+            const cachedData = localStorage.getItem('gci_news_cache');
+            const cacheTime = localStorage.getItem('gci_news_timestamp');
             const now = new Date().getTime();
 
-            // 1. Check if we already have fresh news in the user's browser storage
-            const cachedNews = localStorage.getItem('gci_cache');
-            const cacheTime = localStorage.getItem('gci_timestamp');
-
-            if (cachedNews && cacheTime && (now - cacheTime < CONFIG.cacheExpiry)) {
-                console.log("Loading news from local cache to save API credits.");
-                apiStatus.innerText = "● Data: Cached Mode";
-                renderNewsItems(JSON.parse(cachedNews));
+            if (cachedData && cacheTime && (now - cacheTime < CONFIG.cacheLimit)) {
+                console.log("Using cached news to save API credits.");
+                status.innerText = "Data: Cached (Safe)";
+                renderFeed(JSON.parse(cachedData));
                 return;
             }
 
-            // 2. No cache? Let's use your API keys (Try NewsData first)
-            apiStatus.innerText = "● Synchronizing Live Feed...";
-            apiStatus.classList.add('pulse', 'text-amber-500');
+            // 2. FETCH NEW DATA (If cache expired or missing)
+            status.innerText = "Data: Requesting Live Sync...";
+            status.classList.add('pulse', 'text-amber-500');
 
             try {
-                // NewsData.io Fetch
+                // Try NewsData.io first
                 let response = await fetch(`https://newsdata.io/api/1/news?apikey=${CONFIG.newsDataKey}&q=geopolitics%20OR%20sovereignty%20OR%20"regional%20bloc"&language=en`);
                 let data = await response.json();
-                let articles = [];
 
-                if (data.results && data.results.length > 0) {
-                    articles = data.results.map(art => ({
-                        type: "Hegemony Shift",
-                        title: art.title,
-                        desc: art.description || "Administrative details restricted. Monitor official channels.",
-                        url: art.link
+                let articles = [];
+                if (data.results) {
+                    articles = data.results.map(a => ({
+                        tag: "Geopolitics",
+                        title: a.title,
+                        summary: a.description || "No summary available.",
+                        link: a.link
                     }));
                 } else {
-                    // Failover to GNews.io if NewsData is empty or fails
-                    console.warn("NewsData failed. Switching to GNews failover.");
+                    // Failover to GNews.io
+                    console.log("NewsData failed, switching to GNews failover...");
                     response = await fetch(`https://gnews.io/api/v4/search?q=geopolitics&lang=en&apikey=${CONFIG.gNewsKey}`);
                     data = await response.json();
-                    articles = data.articles.map(art => ({
-                        type: "Vector Detected",
-                        title: art.title,
-                        desc: art.description,
-                        url: art.url
+                    articles = data.articles.map(a => ({
+                        tag: "Shift Detected",
+                        title: a.title,
+                        summary: a.description,
+                        link: a.url
                     }));
                 }
 
-                // Save results to user's browser to save your API hits for the day
-                localStorage.setItem('gci_cache', JSON.stringify(articles));
-                localStorage.setItem('gci_timestamp', now);
+                // Save to Cache
+                localStorage.setItem('gci_news_cache', JSON.stringify(articles));
+                localStorage.setItem('gci_news_timestamp', now);
                 
-                renderNewsItems(articles);
-                apiStatus.innerText = "● Feed: Active";
-                apiStatus.classList.remove('pulse', 'text-amber-500');
+                renderFeed(articles);
+                status.innerText = "Data: Fresh (Updated)";
+                status.classList.remove('pulse', 'text-amber-500');
 
-            } catch (error) {
-                console.error("Critical API Failure:", error);
-                apiStatus.innerText = "● Data: Offline (Limits Exceeded)";
-                feed.innerHTML = '<div class="text-center py-10 mono text-xs text-zinc-800 uppercase tracking-widest italic">Global information systems blocked. Retrying later.</div>';
+            } catch (err) {
+                console.error("API Error:", err);
+                status.innerText = "Data: Error / Offline";
+                feed.innerHTML = '<div class="text-center text-zinc-700 text-xs mono">External news sync currently blocked. Limits exceeded.</div>';
             }
         }
 
-        /** RENDERING FUNCTION **/
-        function renderNewsItems(articles) {
+        function renderFeed(articles) {
             const feed = document.getElementById('source-feed');
             feed.innerHTML = '';
-            
-            articles.forEach(item => {
+            articles.slice(0, 15).forEach(item => {
                 const card = document.createElement('div');
-                card.className = "group border-l-2 border-zinc-900 pl-6 py-4 hover:border-amber-500 hover:bg-zinc-900/10 transition-all";
+                card.className = "p-5 bg-zinc-900/10 border-l-2 border-zinc-800 hover:border-amber-500 transition-all rounded-r";
                 card.innerHTML = `
                     <div class="flex items-center gap-3 mb-2">
-                        <span class="text-[9px] font-bold px-2 py-0.5 bg-amber-900/10 text-amber-600 rounded border border-amber-900/20 mono uppercase tracking-tighter">${item.type}</span>
+                        <span class="text-[9px] font-bold px-2 py-0.5 bg-amber-900/20 text-amber-500 rounded border border-amber-900/30 mono uppercase">${item.tag}</span>
                     </div>
-                    <h4 class="text-lg font-semibold text-zinc-200 mb-1 group-hover:text-amber-400 transition-colors">${item.title}</h4>
-                    <p class="text-zinc-500 text-sm mb-3 leading-relaxed">${item.desc}</p>
-                    <a href="${item.url}" target="_blank" class="text-[10px] text-amber-700 hover:text-amber-400 mono uppercase font-bold tracking-widest">Verify Event ↗</a>
+                    <h4 class="text-lg font-semibold text-zinc-100 mb-1 leading-tight">${item.title}</h4>
+                    <p class="text-zinc-500 text-sm mb-3 leading-relaxed">${item.summary}</p>
+                    <a href="${item.link}" target="_blank" class="text-[10px] text-amber-600 hover:text-amber-400 mono uppercase font-bold tracking-widest">Read Verification ↗</a>
                 `;
                 feed.appendChild(card);
             });
         }
 
-        /** INITIALIZE PAGE **/
         document.addEventListener('DOMContentLoaded', () => {
-            // Animate the big bar
             setTimeout(() => {
-                document.getElementById('progress-bar').style.width = CONFIG.indexPercent + "%";
-                document.getElementById('percent-text').innerText = CONFIG.indexPercent + "%";
+                document.getElementById('progress-bar').style.width = CONFIG.percent + "%";
+                document.getElementById('percent-text').innerText = CONFIG.percent + "%";
             }, 500);
-
-            // Set static text
-            document.getElementById('last-update').innerText = CONFIG.updateDate;
-            document.getElementById('embed-code').value = `<iframe src="${window.location.href}" width="100%" height="600" style="border:none;"></iframe>`;
-
-            // Setup Social Sharing
-            const shareMsg = `The Global Control Index is at ${CONFIG.indexPercent}%. Sovereignty is eroding. Live updates here: `;
-            document.getElementById('share-x').href = `https://x.com/intent/tweet?text=${encodeURIComponent(shareMsg)}&url=${encodeURIComponent(window.location.href)}`;
-            document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
-            document.getElementById('share-reddit').href = `https://reddit.com/submit?url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(shareMsg)}`;
-
-            // Start news cycle
-            fetchAutomatedNews();
+            document.getElementById('last-update').innerText = CONFIG.updateTime;
+            fetchNews();
         });
-
-        /** CLIPBOARD ACTION **/
-        function copyToClipboard() {
-            navigator.clipboard.writeText(window.location.href);
-            const toast = document.getElementById("copy-toast");
-            toast.className = "show";
-            setTimeout(() => { toast.className = ""; }, 3000);
-        }
     </script>
 </body>
 </html>
