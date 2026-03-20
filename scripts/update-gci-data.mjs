@@ -15,6 +15,9 @@ const QUERIES = [
   '"regime change" coup emergency rule'
 ];
 
+const FALLBACK_QUERY =
+  'geopolitics OR sanctions OR annexation OR "security pact" OR "sphere of influence"';
+
 function uniqueBy(items, keyFn) {
   const seen = new Set();
   const out = [];
@@ -60,6 +63,18 @@ async function aggregateNews() {
   const settled = await Promise.allSettled(QUERIES.map((q) => fetchGdeltArticles(q)));
   const fulfilled = settled.filter((r) => r.status === "fulfilled").map((r) => r.value);
   const merged = fulfilled.flat();
+
+  // If strict topical queries return nothing, try one broader recovery query.
+  if (!merged.length) {
+    try {
+      const fallback = await fetchGdeltArticles(FALLBACK_QUERY);
+      const dedupedFallback = uniqueBy(fallback, (a) => (a.link || a.title).toLowerCase());
+      dedupedFallback.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+      return dedupedFallback.slice(0, 60);
+    } catch {
+      return [];
+    }
+  }
 
   const unique = uniqueBy(merged, (a) => (a.link || a.title).toLowerCase());
   unique.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
@@ -142,10 +157,11 @@ function toFeedItems(articles) {
 async function main() {
   await mkdir(DATA_DIR, { recursive: true });
 
-  const [latestExisting, historyExisting, stateExisting] = await Promise.all([
+  const [latestExisting, historyExisting, stateExisting, feedExisting] = await Promise.all([
     readJsonOrDefault(LATEST_PATH, null),
     readJsonOrDefault(HISTORY_PATH, { points: [] }),
-    readJsonOrDefault(STATE_PATH, {})
+    readJsonOrDefault(STATE_PATH, {}),
+    readJsonOrDefault(FEED_PATH, { items: [] })
   ]);
 
   const articles = await aggregateNews();
@@ -154,11 +170,30 @@ async function main() {
     ? Number(latestExisting.score)
     : null;
 
-  const computed = computeGci({
-    articles,
-    structuralState: nextStructuralState,
-    previousScore
-  });
+  // If provider returns zero articles on a run, keep continuity instead of dropping sharply.
+  const computed = articles.length
+    ? computeGci({
+        articles,
+        structuralState: nextStructuralState,
+        previousScore
+      })
+    : {
+        score: Number.isFinite(previousScore) ? previousScore : 60,
+        confidence: "low",
+        components: {
+          events: { score: 0 },
+          structural: {
+            score: Number(
+              (
+                nextStructuralState.allianceConcentration * 0.24 +
+                nextStructuralState.tradeDependenceConcentration * 0.22 +
+                nextStructuralState.conflictCentralization * 0.28 +
+                nextStructuralState.governancePressure * 0.26
+              ).toFixed(2)
+            )
+          }
+        }
+      };
 
   const nowIso = new Date().toISOString();
   const latestOut = {
@@ -185,7 +220,15 @@ async function main() {
   await Promise.all([
     writeFile(LATEST_PATH, JSON.stringify(latestOut, null, 2) + "\n", "utf8"),
     writeFile(HISTORY_PATH, JSON.stringify({ points: trimmedHistory }, null, 2) + "\n", "utf8"),
-    writeFile(FEED_PATH, JSON.stringify({ items: toFeedItems(articles) }, null, 2) + "\n", "utf8"),
+    writeFile(
+      FEED_PATH,
+      JSON.stringify(
+        { items: articles.length ? toFeedItems(articles) : (Array.isArray(feedExisting.items) ? feedExisting.items : []) },
+        null,
+        2
+      ) + "\n",
+      "utf8"
+    ),
     writeFile(STATE_PATH, JSON.stringify(nextStructuralState, null, 2) + "\n", "utf8")
   ]);
 
