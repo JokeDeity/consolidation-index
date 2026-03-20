@@ -1,10 +1,10 @@
 {
   "score": 60.4,
-  "updated_at": "2026-03-20T00:08:13.311Z",
+  "updated_at": "2026-03-20T03:10:53.427Z",
   "confidence": "low",
   "model": "gci-algorithm-v1",
   "components": {
-    "event_score": 8.484655352737464,
-    "structural_score": 56.040000000000006
+    "event_score": 0,
+    "structural_score": 56.04
   }
 }
